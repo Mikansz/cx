@@ -12,39 +12,64 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Actions\Action;
+use Auth;
 
 class LeaveResource extends Resource
 {
     protected static ?string $model = Leave::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-m-minus-circle';
+
+    protected static ?string $navigationGroup = 'Attendance Management';
+    protected static ?int $navigationSort = 8;
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date')
-                    ->required(),
-                Forms\Components\Textarea::make('reason')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\Textarea::make('note')
-                    ->columnSpanFull(),
-            ]);
+        $schema = [
+            Forms\Components\Section::make('Detail')
+                ->schema([
+                    Forms\Components\DatePicker::make('start_date')
+                        ->required(),
+                    Forms\Components\DatePicker::make('end_date')
+                        ->required(),
+                    Forms\Components\Textarea::make('reason')
+                        ->columnSpanFull(),
+                ]),
+        ];
+    
+        if (Auth::user()->hasRole('super_admin')) {
+            $schema[] = Forms\Components\Section::make('Approval')
+                ->schema([
+                    Forms\Components\Select::make('status')
+                        ->options([
+                            'approved' => 'Approved',
+                            'rejected' => 'Rejected',
+                        ])
+                        ->required()
+                        ->label('Status'),
+                    Forms\Components\Textarea::make('note')
+                        ->label('Note')
+                        ->columnSpanFull()
+                ]);
+        }
+    
+        return $form->schema($schema);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $is_super_admin = Auth::user()->hasRole('super_admin');
+
+                if (!$is_super_admin) {
+                    $query->where('user_id', Auth::user()->id);
+                }
+            })
             ->columns([
+                
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->date()
@@ -52,7 +77,19 @@ class LeaveResource extends Resource
                 Tables\Columns\TextColumn::make('end_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('reason')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'gray',
+                        'approved' => 'success',
+                        'rejected' => 'danger'
+                    })
+                    ->description(fn (Leave $record): ?string => $record->note ?? null )
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -70,6 +107,7 @@ class LeaveResource extends Resource
                 //
             ])
             ->actions([
+                
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
