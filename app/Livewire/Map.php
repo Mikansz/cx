@@ -16,10 +16,8 @@ class Map extends Component implements HasForms
 {
     use InteractsWithForms;
     public $markers = [];
-
-    public $total_price;
-
     public $created_at = '';
+    public $search = '';
 
     public function mount(): void
     {
@@ -34,15 +32,23 @@ class Map extends Component implements HasForms
                 Forms\Components\Section::make('Filter')
                     ->schema([
                         Forms\Components\DatePicker::make('created_at')
-                            ->label('Date')
+                            ->label('Tanggal')
                             ->reactive()
                             ->afterStateUpdated(function ($state) {
-                                
                                 $this->created_at = $state;
                                 $this->filterAttendance();
                             }),
-                        
+                        Forms\Components\TextInput::make('search')
+                            ->label('Cari Karyawan')
+                            ->placeholder('Masukkan nama karyawan')
+                            ->reactive()
+                            ->debounce(500)
+                            ->afterStateUpdated(function ($state) {
+                                $this->search = $state;
+                                $this->filterAttendance();
+                            }),
                     ]),
+                
             ]);
     }
 
@@ -55,12 +61,16 @@ class Map extends Component implements HasForms
     {
         $query = Attendance::with('user');
         
-        if (isset($this->created_at)) {
+        if ($this->created_at) {
             $query->whereDate('created_at', $this->created_at);
-            //  dd($query->get());
         }
         
-
+        if ($this->search && strlen(trim($this->search)) > 0) {
+            $query->whereHas('user', function ($q) {
+                $q->where('name', 'like', '%' . $this->search . '%');
+            });
+        }
+        
         $this->markers = $query->get();
         $this->dispatch('markersUpdated');
     }

@@ -3,9 +3,9 @@
          <div class="bg-white p-6 rounded-lg mt-3 shadow-lg">
              <div class="grid grid-cols-1 gap-6 mb-6">
                  <div>
-                     <h2 class="text-2xl font-bold mb-2">Informasi Pegawai</h2>
+                     <h2 class="text-2xl font-bold mb-2">Informasi karyawan</h2>
                      <div class="bg-gray-100 p-4 rounded-lg">
-                         <p><strong>Nama Pegawai : </strong> {{Auth::user()->name}}</p>
+                         <p><strong>Nama karyawan : </strong> {{Auth::user()->name}}</p>
                          <p><strong>Kantor : </strong>{{$schedule->office->name}}</p>
                          <p><strong>Shift : </strong>{{$schedule->shift->name}} ({{$schedule->shift->start_time}} - {{$schedule->shift->end_time}}) wib</p>
                          @if($schedule->is_wfa)

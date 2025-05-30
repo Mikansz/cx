@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Observers;
+
+use App\Models\Karyawan;
+use App\Models\Schedule;
+use App\Models\Shift;
+use App\Models\Office;
+
+class KaryawanObserver
+{
+    /**
+     * Handle the Karyawan "created" event.
+     */
+    public function created(Karyawan $karyawan): void
+    {
+        // Get the morning shift (assuming ID 1 or finding by name 'Pagi')
+        $morningShift = Shift::where('name', 'Pagi')->first();
+        
+        // If morning shift not found, get the first shift as default
+        if (!$morningShift) {
+            $morningShift = Shift::first();
+        }
+        
+        // If no shifts exist at all, return without creating a schedule
+        if (!$morningShift) {
+            return;
+        }
+        
+        // Get the first office as default
+        $defaultOffice = Office::first();
+        
+        // If no offices exist, return without creating a schedule
+        if (!$defaultOffice) {
+            return;
+        }
+        
+        // Create default schedule with morning shift for the new employee
+        Schedule::create([
+            'user_id' => $karyawan->user_id,
+            'shift_id' => $morningShift->id,
+            'office_id' => $defaultOffice->id,
+            'is_wfa' => false,
+            'is_banned' => false,
+        ]);
+    }
+}

@@ -39,6 +39,18 @@ class Attendance extends Model
         return $startTime->greaterThan($scheduleStartTime);
     }
 
+    public function isEarlyLeave()
+    {
+        if (!$this->end_time || !$this->schedule_end_time) {
+            return false;
+        }
+
+        $scheduleEndTime = Carbon::parse($this->schedule_end_time);
+        $endTime = Carbon::parse($this->end_time);
+
+        return $endTime->lessThan($scheduleEndTime);
+    }
+
     public function workDuration()
     {
         $startTime = Carbon::parse($this->start_time);

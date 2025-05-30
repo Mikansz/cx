@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
@@ -15,9 +14,11 @@ use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-
+use Illuminate\Support\Facades\Blade;
+use App\Filament\Resources\OfficeResource;
 
 class BackofficePanelProvider extends PanelProvider
 {
@@ -31,7 +32,15 @@ class BackofficePanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->plugin(\BezhanSalleh\FilamentShield\FilamentShieldPlugin::make())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->navigationGroups([
+                'Data Master',
+                'Manajemen Karyawan', 
+                'Manajemen Lokasi',
+                'Manajemen Jadwal',
+                'Manajemen Kehadiran',
+            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
@@ -55,9 +64,13 @@ class BackofficePanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->plugins([
-                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
-            ]);
-            
+            ->renderHook(
+                'panels::scripts.after',
+                fn (): string => Blade::render(<<<'BLADE'
+                <script>
+                    // Script space - currently empty
+                </script>
+                BLADE)
+            );
     }
 }

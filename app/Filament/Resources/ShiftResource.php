@@ -17,19 +17,39 @@ class ShiftResource extends Resource
 {
     protected static ?string $model = Shift::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    
+    protected static ?string $navigationGroup = 'Manajemen Jadwal';
+    
+    protected static ?string $navigationLabel = 'Shift Kerja';
+    
+    protected static ?string $modelLabel = 'Shift Kerja';
+    
+    protected static ?string $pluralModelLabel = 'Shift Kerja';
+    
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TimePicker::make('start_time')
-                    ->required(),
-                Forms\Components\timePicker::make('end_time')
-                    ->required(),
+                Forms\Components\Section::make('Informasi Shift')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nama Shift')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
+                
+                Forms\Components\Section::make('Jam Kerja')
+                    ->schema([
+                        Forms\Components\TimePicker::make('start_time')
+                            ->label('Waktu Mulai')
+                            ->required(),
+                        Forms\Components\timePicker::make('end_time')
+                            ->label('Waktu Selesai')
+                            ->required(),
+                    ])->columns(2),
             ]);
     }
 

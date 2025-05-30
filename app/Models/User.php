@@ -10,6 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -58,5 +59,10 @@ class User extends Authenticatable
     public function getImageUrlAttribute()
     {
         return $this->image ? url('storage/' . $this->image) : null;
+    }
+
+    public function karyawan(): HasOne
+    {
+        return $this->hasOne(Karyawan::class);
     }
 }

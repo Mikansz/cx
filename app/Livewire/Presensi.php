@@ -19,7 +19,19 @@ class Presensi extends Component
         $schedule = Schedule::where('user_id', Auth::user()->id)->first();
         $attendance = Attendance::where('user_id', Auth::user()->id)
                             ->whereDate('created_at', date('Y-m-d'))->first();
-        // dd($schedule);
+        
+        // Block access if schedule doesn't exist or office is not set
+        if (!$schedule) {
+            return view('livewire.presensi-error', [
+                'errorMessage' => 'Jadwal belum ditetapkan. Silahkan hubungi admin.'
+            ]);
+        }
+        
+        if (!$schedule->office) {
+            return view('livewire.presensi-error', [
+                'errorMessage' => 'Lokasi kantor belum ditentukan. Silahkan hubungi admin untuk menetapkan lokasi kantor Anda.'
+            ]);
+        }
         
         return view('livewire.presensi', [
             'schedule' => $schedule,
@@ -49,36 +61,48 @@ class Presensi extends Component
             return;
         }
 
-        if ($schedule) {
-            $attedance = Attendance::where('user_id', Auth::user()->id)
-                            ->whereDate('created_at', date('Y-m-d'))->first();
-            if (!$attedance) {
-                $attedance = Attendance::create([
-                    'user_id' => Auth::user()->id,
-                    'schedule_latitude' => $schedule->office->latitude,
-                    'schedule_longitude' => $schedule->office->longitude,
-                    'schedule_start_time' => $schedule->shift->start_time,
-                    'schedule_end_time' => $schedule->shift->end_time,
-                    'start_latitude' => $this->latitude,
-                    'start_longitude' => $this->longitude,
-                    'start_time' => Carbon::now()->toTimeString(),
-                    'end_time' => Carbon::now()->toTimeString(),
-                ]);
-            } else {
-                $attedance->update([
-                    'end_latitude' => $this->latitude,
-                    'end_longitude' => $this->longitude,
-                    'end_time' => Carbon::now()->toTimeString(),
-                ]);
-            }
-            
-            return redirect('backoffice/attendances');
-
-            // return redirect()->route('presensi', [
-            //     'schedule' => $schedule,
-            //     'insideRadius' => false
-            // ]);
-            
+        // Check if schedule exists
+        if (!$schedule) {
+            session()->flash('error', 'Jadwal belum ditetapkan. Silahkan hubungi admin.');
+            return;
         }
+        
+        // Check if office exists before accessing properties
+        if (!$schedule->office) {
+            session()->flash('error', 'Lokasi kantor belum ditentukan. Silahkan hubungi admin untuk menetapkan lokasi kantor Anda.');
+            return;
+        }
+        
+        if (!$schedule->shift) {
+            session()->flash('error', 'Shift belum ditetapkan. Silahkan hubungi admin.');
+            return;
+        }
+            
+        $attendance = Attendance::where('user_id', Auth::user()->id)
+                        ->whereDate('created_at', date('Y-m-d'))->first();
+                        
+        if (!$attendance) {
+            // Create new attendance record for check-in
+            Attendance::create([
+                'user_id' => Auth::user()->id,
+                'schedule_latitude' => $schedule->office->latitude,
+                'schedule_longitude' => $schedule->office->longitude,
+                'schedule_start_time' => $schedule->shift->start_time,
+                'schedule_end_time' => $schedule->shift->end_time,
+                'start_latitude' => $this->latitude,
+                'start_longitude' => $this->longitude,
+                'start_time' => Carbon::now('Asia/Jakarta')->toTimeString(),
+                'end_time' => Carbon::now('Asia/Jakarta')->toTimeString(), // Set default value, can be updated later
+            ]);
+        } else {
+            // Update existing attendance record for check-out
+            $attendance->update([
+                'end_latitude' => $this->latitude,
+                'end_longitude' => $this->longitude,
+                'end_time' => Carbon::now('Asia/Jakarta')->toTimeString(),
+            ]);
+        }
+        
+        return redirect('backoffice/attendances');
     }
 }

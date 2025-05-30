@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('leave_type', ['cuti_tahunan', 'cuti_sakit', 'cuti_melahirkan', 'cuti_penting', 'cuti_besar'])
+                ->default('cuti_tahunan');
             $table->date('start_date');
             $table->date('end_date');
             $table->text('reason')->nullable();

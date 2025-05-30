@@ -20,10 +20,13 @@ class OfficeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'Office Management';
+    protected static ?string $navigationGroup = 'Manajemen Lokasi';
     
+    protected static ?string $modelLabel = 'Lokasi Kantor';
+    
+    protected static ?string $pluralModelLabel = 'Lokasi Kantor';
 
     public static function form(Form $form): Form
     {
@@ -34,18 +37,24 @@ class OfficeResource extends Resource
                         Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\TextInput::make('name')
+                                    ->label('Nama')
                                     ->required()
                                     ->maxLength(255),
+                                // Field pencarian lokasi telah dihapus
                                 OSMMap::make('location')
-                                    ->label('Location')
+                                    ->label('Lokasi')
                                     ->showMarker()
                                     ->draggable()
+                                    ->extraAttributes([
+                                        'id' => 'office-location-map',
+                                    ])
                                     ->extraControl([
- 'lat' => 0, 'lng' => 0,
+                                        'lat' => 0, 'lng' => 0,
                                         'zoomDelta'           => 1,
                                         'zoomSnap'            => 0.25,
                                         'wheelPxPerZoomLevel' => 60
                                     ])
+
                                     ->afterStateHydrated(function (Forms\Get $get, Forms\Set $set, $record) {
                                         if ($record) {
                                             $latitude = $record->latitude;
@@ -64,10 +73,12 @@ class OfficeResource extends Resource
                                 Forms\Components\Group::make()
                                     ->schema([
                                         Forms\Components\TextInput::make('latitude')
+                                            ->label('Garis Lintang')
  ->default(0)
                                             ->required()
                                             ->numeric(),
                                         Forms\Components\TextInput::make('longitude')
+                                            ->label('Garis Bujur')
  ->default(0)
                                             ->required()
                                             ->numeric(),
@@ -82,6 +93,7 @@ class OfficeResource extends Resource
                             Forms\Components\Section::make()
                                 ->schema([
                                     Forms\Components\TextInput::make('radius')
+                                        ->label('Radius')
                                         ->required()
                                         ->numeric(),
                                 ])
@@ -95,24 +107,31 @@ class OfficeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('latitude')
+                    ->label('Garis Lintang')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('longitude')
+                    ->label('Garis Bujur')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('radius')
+                    ->label('Radius')
                     ->numeric()
                     ->sortable(),
             ])
@@ -120,11 +139,11 @@ class OfficeResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus'),
                 ]),
             ]);
     }

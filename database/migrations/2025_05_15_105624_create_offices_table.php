@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->double('latitude');
             $table->double('longitude');
-            $table->int('radius');
+            $table->integer('radius');
             $table->timestamps();
             $table->softDeletes();
 

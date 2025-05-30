@@ -19,9 +19,13 @@ class ScheduleResource extends Resource
     protected static ?string $model = Schedule::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-calendar-days';
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationGroup = 'Attendance Management';
+    protected static ?string $navigationGroup = 'Manajemen Jadwal';
+    
+    protected static ?string $modelLabel = 'Jadwal';
+    
+    protected static ?string $pluralModelLabel = 'Jadwal';
 
     public static function form(Form $form): Form
     {
@@ -31,18 +35,23 @@ class ScheduleResource extends Resource
                     ->schema([
                         Forms\Components\Section::make()
                             ->schema([
-                                Forms\Components\Toggle::make('is_banned'),
+                                Forms\Components\Toggle::make('is_banned')
+                                    ->label('Dilarang'),
                                 Forms\Components\Select::make('user_id')
+                                    ->label('Pengguna')
                                     ->relationship('user', 'name')
                                     ->searchable()
                                     ->required(),
                                 Forms\Components\Select::make('shift_id')
+                                    ->label('Shift')
                                     ->relationship('shift', 'name')
                                     ->required(),
                                 Forms\Components\Select::make('office_id')
+                                    ->label('Lokasi Kantor')
                                     ->relationship('office', 'name')
                                     ->required(),
                                 Forms\Components\Toggle::make('is_wfa')
+                                    ->label('WFA')
                             ])
                     ])
                 
@@ -61,7 +70,7 @@ class ScheduleResource extends Resource
             })
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Name')
+                    ->label('Nama')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
@@ -69,19 +78,24 @@ class ScheduleResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
+                    ->label('Dilarang')
                     ->hidden(fn () => !Auth::user()->hasRole('super_admin')),
                 Tables\Columns\BooleanColumn::make('is_wfa')
                     ->label('WFA'),
                 Tables\Columns\TextColumn::make('shift.name')
+                    ->label('Shift')
                     ->description(fn (Schedule $record): string => $record->shift->start_time.' - '.$record->shift->end_time)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('office.name')
+                    ->label('Lokasi Kantor')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -90,11 +104,11 @@ class ScheduleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus'),
                 ]),
             ]);
     }

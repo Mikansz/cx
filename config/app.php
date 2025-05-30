@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Jakarta',
 
     /*
     |--------------------------------------------------------------------------
@@ -83,6 +83,17 @@ return [
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Translation Path Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Sets the location for the language files in the application
+    |
+    */
+
+    'lang_path' => lang_path(),
 
     /*
     |--------------------------------------------------------------------------

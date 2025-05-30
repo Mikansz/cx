@@ -19,9 +19,11 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $navigationGroup = 'Manajemen Karyawan';
+    protected static ?string $modelLabel = 'Pengguna';
+    protected static ?string $pluralModelLabel = 'Pengguna';
 
     public static function form(Form $form): Form
     {
@@ -32,25 +34,31 @@ class UserResource extends Resource
                         Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\TextInput::make('name')
+                                    ->label('Nama')
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('email')
+                                    ->label('Email')
                                     ->email()
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\Select::make('roles')
+                                    ->label('Peran')
                                     ->relationship('roles', 'name')
                                     ->preload()
                                     ->searchable(),
                                 Forms\Components\FileUpload::make('image')
+                                    ->label('Gambar')
                             ])
                         ]),
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Section::make()
                             ->schema([
-                                Forms\Components\DateTimePicker::make('email_verified_at'),
+                                Forms\Components\DateTimePicker::make('email_verified_at')
+                                    ->label('Email Diverifikasi Pada'),
                                 Forms\Components\TextInput::make('password')
+                                    ->label('Kata Sandi')
                                     ->password()
                                     ->maxLength(255)
                                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
@@ -67,21 +75,28 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
+                        ->label('Gambar')
                         ->circular(),
                 Tables\Columns\TextColumn::make('name')
+                        ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                        ->label('Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
+                        ->label('Peran')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
+                        ->label('Email Diverifikasi Pada')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                        ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                        ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -90,11 +105,11 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Edit'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Hapus'),
                 ]),
             ]);
     }

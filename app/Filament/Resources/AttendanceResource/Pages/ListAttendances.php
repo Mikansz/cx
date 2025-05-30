@@ -15,14 +15,14 @@ class ListAttendances extends ListRecords
     {
         return [
             Action::make('Download Data')
+                ->label('Unduh Data')
                 ->url(route('attendance-export'))
                 ->color('primary'),
             Action::make('Tambah Presensi')
                 ->url(route('presensi'))
                 ->color('success'),
            
-
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Buat Absensi'),
         ];
     }
 }
