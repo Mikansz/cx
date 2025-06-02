@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\Karyawan;
+use App\Models\User;
 use App\Observers\KaryawanObserver;
+use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register observers
         Karyawan::observe(KaryawanObserver::class);
+        User::observe(UserObserver::class);
     }
 }

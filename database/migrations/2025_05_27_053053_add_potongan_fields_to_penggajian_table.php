@@ -12,9 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('penggajian', function (Blueprint $table) {
-            $table->decimal('potongan_kasbon', 12, 2)->default(0)->after('potongan_absen');
-            $table->decimal('potongan_tidak_hadir', 12, 2)->default(0)->after('potongan_kasbon');
-            $table->decimal('potongan_penyesuaian_lainnya', 12, 2)->default(0)->after('potongan_tidak_hadir');
+            if (!Schema::hasColumn('penggajian', 'potongan_kasbon')) {
+                $table->decimal('potongan_kasbon', 12, 2)->default(0)->after('potongan_absen');
+            }
+            if (!Schema::hasColumn('penggajian', 'potongan_tidak_hadir')) {
+                $table->decimal('potongan_tidak_hadir', 12, 2)->default(0)->after('potongan_kasbon');
+            }
+            if (!Schema::hasColumn('penggajian', 'potongan_penyesuaian_lainnya')) {
+                $table->decimal('potongan_penyesuaian_lainnya', 12, 2)->default(0)->after('potongan_tidak_hadir');
+            }
         });
     }
 

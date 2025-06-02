@@ -65,4 +65,37 @@ class User extends Authenticatable
     {
         return $this->hasOne(Karyawan::class);
     }
+    
+    public function overtimes(): HasMany
+    {
+        return $this->hasMany(Overtime::class);
+    }
+    
+    /**
+     * Assign a single role to the user, removing all other roles
+     */
+    public function assignSingleRole(string $role): void
+    {
+        // Remove all existing roles
+        $this->syncRoles([]);
+        
+        // Assign the new role
+        $this->assignRole($role);
+    }
+    
+    /**
+     * Get the primary role of the user (first role if multiple exist)
+     */
+    public function getPrimaryRole(): ?string
+    {
+        return $this->roles()->first()?->name;
+    }
+    
+    /**
+     * Check if user has multiple roles (for validation)
+     */
+    public function hasMultipleRoles(): bool
+    {
+        return $this->roles()->count() > 1;
+    }
 }

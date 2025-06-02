@@ -13,6 +13,11 @@ use Filament\Infolists\Components\Grid;
 class ViewJabatan extends ViewRecord
 {
     protected static string $resource = JabatanResource::class;
+    
+    public function getTitle(): string
+    {
+        return "Detail Jabatan: {$this->record->nama_jabatan}";
+    }
 
     protected function getHeaderActions(): array
     {

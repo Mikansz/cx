@@ -33,10 +33,15 @@ class Penggajian extends Model
         'potongan_pph21',
         'total_gaji',
         'keterangan',
+        'status',
+        'approved_by',
+        'approval_note',
+        'approved_at',
     ];
     
     protected $casts = [
         'periode' => 'date',
+        'approved_at' => 'datetime',
         'gaji_pokok' => 'decimal:2',
         'tunjangan_transport' => 'decimal:2',
         'tunjangan_makan' => 'decimal:2',
@@ -59,5 +64,10 @@ class Penggajian extends Model
     public function karyawan(): BelongsTo
     {
         return $this->belongsTo(Karyawan::class);
+    }
+    
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

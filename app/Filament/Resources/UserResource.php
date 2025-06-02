@@ -42,11 +42,15 @@ class UserResource extends Resource
                                     ->email()
                                     ->required()
                                     ->maxLength(255),
-                                Forms\Components\Select::make('roles')
+                                Forms\Components\Select::make('role')
                                     ->label('Peran')
-                                    ->relationship('roles', 'name')
-                                    ->preload()
-                                    ->searchable(),
+                                    ->options(\Spatie\Permission\Models\Role::pluck('name', 'name'))
+                                    ->required()
+                                    ->searchable()
+                                    ->afterStateUpdated(function ($state, $set) {
+                                        // This will be handled in the page save methods
+                                    })
+                                    ->dehydrated(false), // Don't save this field directly
                                 Forms\Components\FileUpload::make('image')
                                     ->label('Gambar')
                             ])

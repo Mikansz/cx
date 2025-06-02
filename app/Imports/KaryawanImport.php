@@ -69,8 +69,7 @@ class KaryawanImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
                 }
             }
             
-            // Generate kode karyawan otomatis
-            $kode_karyawan = $this->generateKodeKaryawan();
+            
             
             // Convert jenis kelamin ke enum format
             $jenisKelamin = $row['jenis_kelamin'];

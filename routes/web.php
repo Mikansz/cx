@@ -7,6 +7,8 @@ use App\Exports\AttendanceExport;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\KaryawanImportExportController;
 use App\Http\Controllers\KaryawanTemplateController;
+use App\Http\Controllers\SlipGajiController;
+use App\Http\Controllers\FileDownloadController;
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('presensi', Presensi::class)->name('presensi');
@@ -15,7 +17,13 @@ Route::group(['middleware' => 'auth'], function() {
     })->name('attendance-export');
     
     Route::get('leave/{leave}/slip/download', [LeaveController::class, 'downloadSlip'])->name('leave.slip.download');
-
+    
+    // Route untuk download slip gaji
+    Route::get('penggajian/{penggajian}/slip/download', [SlipGajiController::class, 'download'])->name('penggajian.slip.download');
+    
+    // Route untuk download surat sakit
+    Route::get('sick-certificate/{leave}/download', [FileDownloadController::class, 'downloadSickCertificate'])
+        ->name('sick-certificate.download');
     
     // Rute untuk import dan export data karyawan
     Route::get('karyawan/export', [KaryawanImportExportController::class, 'export'])->name('karyawan.export');

@@ -15,7 +15,7 @@ class LeavePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_leave');
+        return $user->can('view_any_sick::leave');
     }
 
     /**
@@ -23,7 +23,7 @@ class LeavePolicy
      */
     public function view(User $user, Leave $leave): bool
     {
-        return $user->can('view_leave');
+        return $user->can('view_sick::leave');
     }
 
     /**
@@ -31,7 +31,7 @@ class LeavePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_leave');
+        return $user->can('create_sick::leave');
     }
 
     /**
@@ -39,7 +39,7 @@ class LeavePolicy
      */
     public function update(User $user, Leave $leave): bool
     {
-        return $user->can('update_leave');
+        return $user->can('update_sick::leave');
     }
 
     /**
@@ -47,7 +47,7 @@ class LeavePolicy
      */
     public function delete(User $user, Leave $leave): bool
     {
-        return $user->can('delete_leave');
+        return $user->can('delete_sick::leave');
     }
 
     /**
@@ -55,7 +55,7 @@ class LeavePolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_leave');
+        return $user->can('delete_any_sick::leave');
     }
 
     /**
@@ -63,7 +63,7 @@ class LeavePolicy
      */
     public function forceDelete(User $user, Leave $leave): bool
     {
-        return $user->can('force_delete_leave');
+        return $user->can('force_delete_sick::leave');
     }
 
     /**
@@ -71,7 +71,7 @@ class LeavePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_leave');
+        return $user->can('force_delete_any_sick::leave');
     }
 
     /**
@@ -79,7 +79,7 @@ class LeavePolicy
      */
     public function restore(User $user, Leave $leave): bool
     {
-        return $user->can('restore_leave');
+        return $user->can('restore_sick::leave');
     }
 
     /**
@@ -87,7 +87,7 @@ class LeavePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_leave');
+        return $user->can('restore_any_sick::leave');
     }
 
     /**
@@ -95,7 +95,7 @@ class LeavePolicy
      */
     public function replicate(User $user, Leave $leave): bool
     {
-        return $user->can('replicate_leave');
+        return $user->can('replicate_sick::leave');
     }
 
     /**
@@ -103,6 +103,6 @@ class LeavePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_leave');
+        return $user->can('reorder_sick::leave');
     }
 }

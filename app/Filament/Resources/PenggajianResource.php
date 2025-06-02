@@ -19,6 +19,26 @@ class PenggajianResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationGroup = 'Data Master';
+    
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole(['super_admin', 'cfo', 'hrd', 'karyawan']);
+    }
+    
+    public static function canCreate(): bool
+    {
+        return auth()->user()->hasRole(['super_admin', 'hrd']);
+    }
+    
+    public static function canEdit($record): bool
+    {
+        return auth()->user()->hasRole(['super_admin', 'cfo', 'hrd']);
+    }
+    
+    public static function canDelete($record): bool
+    {
+        return auth()->user()->hasRole(['super_admin']);
+    }
     protected static ?string $navigationLabel = 'Penggajian';
     
     protected static ?int $navigationSort = 3;
@@ -202,21 +222,51 @@ class PenggajianResource extends Resource
                             ->label('Keterangan')
                             ->columnSpanFull(),
                     ]),
+                
+                Forms\Components\Section::make('Status Persetujuan')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'pending' => 'Menunggu Persetujuan',
+                                'approved' => 'Disetujui',
+                                'rejected' => 'Ditolak',
+                            ])
+                            ->default('pending')
+                            ->required()
+                            ->visible(fn (?string $context) => $context === 'edit' && auth()->user()->hasRole(['cfo'])),
+                        Forms\Components\Textarea::make('approval_note')
+                            ->label('Catatan Persetujuan')
+                            ->visible(fn (?string $context) => $context === 'edit' && auth()->user()->hasRole(['cfo']))
+                            ->columnSpanFull(),
+                    ])
+                    ->visible(fn (?string $context) => $context === 'edit'),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                // Jika user adalah karyawan, hanya tampilkan penggajian mereka sendiri
+                if (auth()->user()->hasRole('karyawan')) {
+                    $karyawan = auth()->user()->karyawan;
+                    if ($karyawan) {
+                        $query->where('karyawan_id', $karyawan->id);
+                    } else {
+                        // Jika user karyawan tapi tidak ada data karyawan, return empty
+                        $query->whereRaw('1 = 0');
+                    }
+                }
+            })
             ->columns([
-                Tables\Columns\TextColumn::make('karyawan.kode_karyawan')
-                    ->label('Kode Karyawan')
-                    ->searchable()
-                    ->sortable(),
+               
                 Tables\Columns\TextColumn::make('karyawan.user.name')
                     ->label('Nama Karyawan')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(fn (): bool => !auth()->user()->hasRole('karyawan')),
                 Tables\Columns\TextColumn::make('periode')
                     ->label('Periode')
                     ->date('F Y')
@@ -224,6 +274,24 @@ class PenggajianResource extends Resource
                 Tables\Columns\TextColumn::make('total_gaji')
                     ->label('Total Gaji')
                     ->money('IDR')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'pending' => 'warning',
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => 'Draft',
+                        'pending' => 'Menunggu Persetujuan',
+                        'approved' => 'Disetujui',
+                        'rejected' => 'Ditolak',
+                        default => ucfirst($state),
+                    })
                     ->sortable(),
 
 
@@ -304,6 +372,22 @@ class PenggajianResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'pending' => 'Menunggu Persetujuan',
+                        'approved' => 'Disetujui',
+                        'rejected' => 'Ditolak',
+                    ])
+                    ->placeholder('Semua Status'),
+                
+                Tables\Filters\Filter::make('pending_approval')
+                    ->label('Menunggu Persetujuan CFO')
+                    ->query(fn (Builder $query): Builder => $query->where('status', 'pending'))
+                    ->toggle()
+                    ->visible(fn (): bool => auth()->user()->hasRole(['cfo'])),
+                
                 Tables\Filters\SelectFilter::make('karyawan_id')
                     ->relationship('karyawan', 'kode_karyawan', function ($query) {
                         return $query->whereNotNull('kode_karyawan')->where('kode_karyawan', '!=', '');
@@ -331,8 +415,82 @@ class PenggajianResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label('Edit'),
-                Tables\Actions\DeleteAction::make()->label('Hapus'),
+                Tables\Actions\Action::make('download_slip')
+                    ->label('Download Slip Gaji')
+                    ->color('info')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn ($record): string => route('penggajian.slip.download', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn ($record): bool => 
+                        $record->status === 'approved' &&
+                        (auth()->user()->hasRole(['karyawan']) ? 
+                            auth()->user()->karyawan?->id === $record->karyawan_id : 
+                            auth()->user()->hasRole(['super_admin', 'cfo', 'hrd'])
+                        )
+                    ),
+                
+                Tables\Actions\Action::make('approve')
+                    ->label('Setujui')
+                    ->color('success')
+                    ->icon('heroicon-o-check-circle')
+                    ->action(function ($record) {
+                        $record->update([
+                            'status' => 'approved',
+                            'approved_by' => auth()->id(),
+                            'approval_note' => 'Disetujui oleh ' . auth()->user()->name . ' pada ' . now()->format('d/m/Y H:i'),
+                            'approved_at' => now(),
+                        ]);
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading('Setujui Penggajian')
+                    ->modalDescription('Apakah Anda yakin ingin menyetujui penggajian ini?')
+                    ->modalSubmitActionLabel('Ya, Setujui')
+                    ->visible(function ($record): bool {
+                        return auth()->user()->hasRole(['cfo', 'super_admin']) && 
+                               in_array($record->status ?? 'pending', ['draft', 'pending']);
+                    }),
+                
+                Tables\Actions\Action::make('reject')
+                    ->label('Tolak')
+                    ->color('danger')
+                    ->icon('heroicon-o-x-circle')
+                    ->form([
+                        Forms\Components\Textarea::make('rejection_note')
+                            ->label('Alasan Penolakan')
+                            ->required()
+                            ->placeholder('Jelaskan alasan penolakan...')
+                    ])
+                    ->action(function ($record, array $data) {
+                        $record->update([
+                            'status' => 'rejected',
+                            'approved_by' => auth()->id(),
+                            'approval_note' => 'Ditolak oleh ' . auth()->user()->name . ' pada ' . now()->format('d/m/Y H:i') . 
+                                             '. Alasan: ' . $data['rejection_note'],
+                            'approved_at' => now(),
+                        ]);
+                    })
+                    ->modalHeading('Tolak Penggajian')
+                    ->modalSubmitActionLabel('Ya, Tolak')
+                    ->visible(function ($record): bool {
+                        return auth()->user()->hasRole(['cfo', 'super_admin']) && 
+                               in_array($record->status ?? 'pending', ['draft', 'pending']);
+                    }),
+                
+
+                
+                Tables\Actions\EditAction::make()
+                    ->label('Edit')
+                    ->visible(fn ($record): bool => 
+                        auth()->user()->hasRole(['super_admin']) || 
+                        (auth()->user()->hasRole(['cfo']) && in_array($record->status, ['pending', 'draft'])) ||
+                        $record->status === 'draft'
+                    ),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus')
+                    ->visible(fn ($record): bool => 
+                        auth()->user()->hasRole(['super_admin']) || 
+                        $record->status === 'draft'
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

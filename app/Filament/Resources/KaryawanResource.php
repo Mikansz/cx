@@ -85,16 +85,6 @@ class KaryawanResource extends Resource
                             ->required(fn (callable $get) => $get('create_new_user'))
                             ->visible(fn (callable $get) => $get('create_new_user'))
                             ->hiddenOn('edit')
-                            ->reactive()
-                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                if ($get('create_new_user') && $state) {
-                                    // Generate email from name: convert to lowercase, replace spaces with dots, add domain
-                                    $email = strtolower(str_replace(' ', '.', $state)) . '@rhi.com';
-                                    // Remove special characters except dots and @
-                                    $email = preg_replace('/[^a-z0-9.@]/', '', $email);
-                                    $set('user_email', $email);
-                                }
-                            })
                             ->maxLength(255),
                         
                         Forms\Components\TextInput::make('user_email')
@@ -104,7 +94,11 @@ class KaryawanResource extends Resource
                             ->visible(fn (callable $get) => $get('create_new_user'))
                             ->hiddenOn('edit')
                             ->unique('users', 'email', ignoreRecord: true)
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->default(function () {
+                                $randomNumber = mt_rand(100, 999);
+                                return "karyawan{$randomNumber}@rhi.com";
+                            }),
                         
                         Forms\Components\TextInput::make('user_password')
                             ->label('Password')
@@ -223,12 +217,7 @@ class KaryawanResource extends Resource
                     ->label('Foto')
                     ->circular()
                     ->size(40),
-                Tables\Columns\TextColumn::make('kode_karyawan')
-                    ->label('Kode Karyawan')
-                    ->searchable()
-                    ->sortable()
-                    ->weight(FontWeight::Bold)
-                    ->copyable(),
+                
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama Lengkap')
                     ->searchable()

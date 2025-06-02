@@ -40,8 +40,10 @@ class JabatanResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('kode_jabatan')
                             ->label('Kode Jabatan')
-                            ->required()
-                            ->maxLength(255),
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->placeholder('Auto-generated')
+                            ->helperText('Kode akan digenerate otomatis dengan format JBT25XXX'),
                         Forms\Components\TextInput::make('nama_jabatan')
                             ->label('Nama Jabatan')
                             ->required()
@@ -76,12 +78,7 @@ class JabatanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('kode_jabatan')
-                    ->label('Kode Jabatan')
-                    ->searchable()
-                    ->sortable()
-                    ->weight(FontWeight::Bold)
-                    ->copyable(),
+                
                 Tables\Columns\TextColumn::make('nama_jabatan')
                     ->label('Nama Jabatan')
                     ->searchable()

@@ -23,10 +23,13 @@ class HRDRoleSeeder extends Seeder
             'approve_leave',
             'reject_leave',
             'view_karyawan',
+            'create_karyawan',
+            'update_karyawan',
             'view_attendance',
             'view_penggajian',
             'create_penggajian',
             'update_penggajian',
+            'view_jabatan',
         ];
         
         foreach ($permissions as $permission) {

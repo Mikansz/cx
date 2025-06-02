@@ -18,11 +18,7 @@ class KaryawanRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('kode_karyawan')
-                    ->label('Kode Karyawan')
-                    ->required()
-                    ->maxLength(255)
-                    ->disabled(),
+              
                 Forms\Components\TextInput::make('user.name')
                     ->label('Nama Karyawan')
                     ->required()
@@ -39,7 +35,7 @@ class KaryawanRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('kode_karyawan')
             ->columns([
-                Tables\Columns\TextColumn::make('kode_karyawan')
+               Tables\Columns\TextColumn::make('kode_karyawan')
                     ->label('Kode Karyawan')
                     ->searchable()
                     ->sortable(),
