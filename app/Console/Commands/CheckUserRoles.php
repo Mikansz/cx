@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\User;
+use Illuminate\Console\Command;
 
 class CheckUserRoles extends Command
 {
@@ -27,30 +27,30 @@ class CheckUserRoles extends Command
     public function handle()
     {
         $this->info('Checking user roles...');
-        
+
         $users = User::with('roles')->get();
         $multiRoleUsers = [];
-        
+
         foreach ($users as $user) {
             $roleCount = $user->roles->count();
             $roleNames = $user->roles->pluck('name')->join(', ');
-            
+
             $this->line("User: {$user->name} ({$user->email}) - Roles: {$roleNames} ({$roleCount} roles)");
-            
+
             if ($roleCount > 1) {
                 $multiRoleUsers[] = $user;
             }
         }
-        
+
         if (count($multiRoleUsers) > 0) {
             $this->warn("\nUsers with multiple roles found:");
             foreach ($multiRoleUsers as $user) {
-                $this->error("- {$user->name}: " . $user->roles->pluck('name')->join(', '));
+                $this->error("- {$user->name}: ".$user->roles->pluck('name')->join(', '));
             }
         } else {
             $this->info("\n✅ All users have single roles!");
         }
-        
+
         return 0;
     }
 }

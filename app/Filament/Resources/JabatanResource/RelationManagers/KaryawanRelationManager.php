@@ -7,8 +7,6 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class KaryawanRelationManager extends RelationManager
 {
@@ -18,7 +16,7 @@ class KaryawanRelationManager extends RelationManager
     {
         return $form
             ->schema([
-              
+
                 Forms\Components\TextInput::make('user.name')
                     ->label('Nama Karyawan')
                     ->required()
@@ -35,7 +33,7 @@ class KaryawanRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('kode_karyawan')
             ->columns([
-               Tables\Columns\TextColumn::make('kode_karyawan')
+                Tables\Columns\TextColumn::make('kode_karyawan')
                     ->label('Kode Karyawan')
                     ->searchable()
                     ->sortable(),

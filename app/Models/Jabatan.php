@@ -2,28 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
 
 class Jabatan extends Model
 {
     use HasFactory;
-    
+
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($jabatan) {
             if (empty($jabatan->kode_jabatan)) {
                 $jabatan->kode_jabatan = static::generateKodeJabatan();
             }
         });
     }
-    
+
     protected $table = 'jabatan';
-    
+
     protected $fillable = [
         'kode_jabatan',
         'nama_jabatan',
@@ -41,7 +41,7 @@ class Jabatan extends Model
     protected $appends = [
         'total_gaji',
     ];
-    
+
     // Relationships
     public function karyawan(): HasMany
     {
@@ -61,12 +61,12 @@ class Jabatan extends Model
 
     public function getFormattedGajiPokokAttribute(): string
     {
-        return 'Rp ' . number_format($this->gaji_pokok, 0, ',', '.');
+        return 'Rp '.number_format($this->gaji_pokok, 0, ',', '.');
     }
 
     public function getFormattedTotalGajiAttribute(): string
     {
-        return 'Rp ' . number_format($this->total_gaji, 0, ',', '.');
+        return 'Rp '.number_format($this->total_gaji, 0, ',', '.');
     }
 
     // Scopes
@@ -112,7 +112,7 @@ class Jabatan extends Model
     public function getAverageAge(): float
     {
         $karyawan = $this->karyawan()->with('user')->get();
-        
+
         if ($karyawan->isEmpty()) {
             return 0;
         }
@@ -141,12 +141,12 @@ class Jabatan extends Model
     {
         $year = date('y'); // Get last 2 digits of current year
         $prefix = "JBT{$year}";
-        
+
         // Get the last jabatan code for current year
         $lastJabatan = static::where('kode_jabatan', 'LIKE', "{$prefix}%")
             ->orderBy('kode_jabatan', 'desc')
             ->first();
-            
+
         if ($lastJabatan) {
             // Extract the number part and increment
             $lastNumber = (int) substr($lastJabatan->kode_jabatan, -3);
@@ -155,8 +155,8 @@ class Jabatan extends Model
             // First jabatan for this year
             $newNumber = 1;
         }
-        
+
         // Format with leading zeros (3 digits)
-        return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        return $prefix.str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 }

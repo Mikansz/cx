@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('leaves') && !Schema::hasColumn('leaves', 'leave_type')) {
+        if (Schema::hasTable('leaves') && ! Schema::hasColumn('leaves', 'leave_type')) {
             Schema::table('leaves', function (Blueprint $table) {
                 $table->enum('leave_type', ['cuti_tahunan', 'cuti_sakit', 'cuti_melahirkan', 'cuti_penting', 'cuti_besar'])
                     ->default('cuti_tahunan')

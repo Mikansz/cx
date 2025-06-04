@@ -16,12 +16,12 @@ class EditKaryawan extends EditRecord
             Actions\DeleteAction::make()->label('Hapus'),
         ];
     }
-    
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         // Set create_new_user to false for edit mode
         $data['create_new_user'] = false;
-        
+
         return $data;
     }
-} 
+}

@@ -4,12 +4,12 @@ namespace App\Filament\Resources\KaryawanResource\Pages;
 
 use App\Filament\Resources\KaryawanResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewKaryawan extends ViewRecord
 {

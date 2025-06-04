@@ -18,7 +18,7 @@ return [
             'updated_at' => 'Diperbarui Pada',
         ],
     ],
-    
+
     // Terjemahan untuk navigasi
     'navigation' => [
         'users' => 'Pengguna',
@@ -29,7 +29,7 @@ return [
         'leaves' => 'Cuti',
         'attendances' => 'Absensi',
     ],
-    
+
     // Terjemahan untuk resource users
     'resources' => [
         'users' => [
@@ -128,4 +128,4 @@ return [
             ],
         ],
     ],
-]; 
+];

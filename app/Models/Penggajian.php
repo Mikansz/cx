@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Penggajian extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'penggajian';
-    
+
     protected $fillable = [
         'karyawan_id',
         'periode',
@@ -38,7 +38,7 @@ class Penggajian extends Model
         'approval_note',
         'approved_at',
     ];
-    
+
     protected $casts = [
         'periode' => 'date',
         'approved_at' => 'datetime',
@@ -60,12 +60,12 @@ class Penggajian extends Model
         'potongan_pph21' => 'decimal:2',
         'total_gaji' => 'decimal:2',
     ];
-    
+
     public function karyawan(): BelongsTo
     {
         return $this->belongsTo(Karyawan::class);
     }
-    
+
     public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PenggajianResource\Pages;
-use App\Filament\Resources\PenggajianResource\RelationManagers;
 use App\Models\Penggajian;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,39 +10,41 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PenggajianResource extends Resource
 {
     protected static ?string $model = Penggajian::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+
     protected static ?string $navigationGroup = 'Data Master';
-    
+
     public static function canViewAny(): bool
     {
         return auth()->user()->hasRole(['super_admin', 'cfo', 'hrd', 'karyawan']);
     }
-    
+
     public static function canCreate(): bool
     {
         return auth()->user()->hasRole(['super_admin', 'hrd']);
     }
-    
+
     public static function canEdit($record): bool
     {
         return auth()->user()->hasRole(['super_admin', 'cfo', 'hrd']);
     }
-    
+
     public static function canDelete($record): bool
     {
         return auth()->user()->hasRole(['super_admin']);
     }
+
     protected static ?string $navigationLabel = 'Penggajian';
-    
+
     protected static ?int $navigationSort = 3;
-    
+
     protected static ?string $modelLabel = 'Penggajian';
+
     protected static ?string $pluralModelLabel = 'Penggajian';
 
     public static function form(Form $form): Form
@@ -58,7 +59,7 @@ class PenggajianResource extends Resource
                                 titleAttribute: 'kode_karyawan',
                                 modifyQueryUsing: fn ($query) => $query->with('jabatan')->whereNotNull('kode_karyawan')->where('kode_karyawan', '!=', '')
                             )
-                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->kode_karyawan . ' - ' . ($record->user?->name ?? 'No User'))
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->kode_karyawan.' - '.($record->user?->name ?? 'No User'))
                             ->searchable()
                             ->preload()
                             ->required()
@@ -67,15 +68,15 @@ class PenggajianResource extends Resource
                                 if ($state) {
                                     // Get karyawan with jabatan
                                     $karyawan = \App\Models\Karyawan::with('jabatan')->find($state);
-                                    
+
                                     if ($karyawan && $karyawan->jabatan) {
                                         $jabatan = $karyawan->jabatan;
-                                        
+
                                         // Auto-fill gaji pokok dan tunjangan dari jabatan
                                         $set('gaji_pokok', $jabatan->gaji_pokok);
                                         $set('tunjangan_transport', $jabatan->tunjangan_transportasi);
                                         $set('tunjangan_makan', $jabatan->tunjangan_makan);
-                                        
+
                                         // Set other allowances to 0 by default
                                         $set('tunjangan_komunikasi', 0);
                                         $set('tunjangan_kesehatan', 0);
@@ -83,13 +84,13 @@ class PenggajianResource extends Resource
                                         $set('tunjangan_hari_raya', 0);
                                         $set('tunjangan_insentif', 0);
                                         $set('tunjangan_lainnya', 0);
-                                        
+
                                         // Set deductions to 0 by default
                                         $set('potongan_kasbon', 0);
                                         $set('potongan_tidak_hadir', 0);
                                         $set('potongan_penyesuaian_lainnya', 0);
                                         $set('potongan_pph21', 0);
-                                        
+
                                         // Calculate total automatically
                                         self::updateTotalGaji($set, $get);
                                     }
@@ -101,7 +102,7 @@ class PenggajianResource extends Resource
                             ->required()
                             ->default(now()),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Gaji & Tunjangan')
                     ->schema([
                         Forms\Components\TextInput::make('gaji_pokok')
@@ -163,9 +164,7 @@ class PenggajianResource extends Resource
                             ->default(0),
 
                     ])->columns(3),
-                
 
-                
                 Forms\Components\Section::make('Potongan')
                     ->schema([
 
@@ -194,7 +193,7 @@ class PenggajianResource extends Resource
                             ->prefix('Rp')
                             ->default(0),
                     ])->columns(3),
-                
+
                 Forms\Components\Section::make('Total & Keterangan')
                     ->schema([
                         Forms\Components\Grid::make(2)
@@ -222,7 +221,7 @@ class PenggajianResource extends Resource
                             ->label('Keterangan')
                             ->columnSpanFull(),
                     ]),
-                
+
                 Forms\Components\Section::make('Status Persetujuan')
                     ->schema([
                         Forms\Components\Select::make('status')
@@ -261,12 +260,12 @@ class PenggajianResource extends Resource
                 }
             })
             ->columns([
-               
+
                 Tables\Columns\TextColumn::make('karyawan.user.name')
                     ->label('Nama Karyawan')
                     ->searchable()
                     ->sortable()
-                    ->visible(fn (): bool => !auth()->user()->hasRole('karyawan')),
+                    ->visible(fn (): bool => ! auth()->user()->hasRole('karyawan')),
                 Tables\Columns\TextColumn::make('periode')
                     ->label('Periode')
                     ->date('F Y')
@@ -293,7 +292,6 @@ class PenggajianResource extends Resource
                         default => ucfirst($state),
                     })
                     ->sortable(),
-
 
                 Tables\Columns\TextColumn::make('tunjangan_transport')
                     ->label('Tunjangan Transport')
@@ -381,13 +379,13 @@ class PenggajianResource extends Resource
                         'rejected' => 'Ditolak',
                     ])
                     ->placeholder('Semua Status'),
-                
+
                 Tables\Filters\Filter::make('pending_approval')
                     ->label('Menunggu Persetujuan CFO')
                     ->query(fn (Builder $query): Builder => $query->where('status', 'pending'))
                     ->toggle()
                     ->visible(fn (): bool => auth()->user()->hasRole(['cfo'])),
-                
+
                 Tables\Filters\SelectFilter::make('karyawan_id')
                     ->relationship('karyawan', 'kode_karyawan', function ($query) {
                         return $query->whereNotNull('kode_karyawan')->where('kode_karyawan', '!=', '');
@@ -412,7 +410,7 @@ class PenggajianResource extends Resource
                                 $data['periode_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('periode', '<=', $date),
                             );
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('download_slip')
@@ -421,14 +419,13 @@ class PenggajianResource extends Resource
                     ->icon('heroicon-o-arrow-down-tray')
                     ->url(fn ($record): string => route('penggajian.slip.download', $record))
                     ->openUrlInNewTab()
-                    ->visible(fn ($record): bool => 
-                        $record->status === 'approved' &&
-                        (auth()->user()->hasRole(['karyawan']) ? 
-                            auth()->user()->karyawan?->id === $record->karyawan_id : 
+                    ->visible(fn ($record): bool => $record->status === 'approved' &&
+                        (auth()->user()->hasRole(['karyawan']) ?
+                            auth()->user()->karyawan?->id === $record->karyawan_id :
                             auth()->user()->hasRole(['super_admin', 'cfo', 'hrd'])
                         )
                     ),
-                
+
                 Tables\Actions\Action::make('approve')
                     ->label('Setujui')
                     ->color('success')
@@ -437,7 +434,7 @@ class PenggajianResource extends Resource
                         $record->update([
                             'status' => 'approved',
                             'approved_by' => auth()->id(),
-                            'approval_note' => 'Disetujui oleh ' . auth()->user()->name . ' pada ' . now()->format('d/m/Y H:i'),
+                            'approval_note' => 'Disetujui oleh '.auth()->user()->name.' pada '.now()->format('d/m/Y H:i'),
                             'approved_at' => now(),
                         ]);
                     })
@@ -446,10 +443,10 @@ class PenggajianResource extends Resource
                     ->modalDescription('Apakah Anda yakin ingin menyetujui penggajian ini?')
                     ->modalSubmitActionLabel('Ya, Setujui')
                     ->visible(function ($record): bool {
-                        return auth()->user()->hasRole(['cfo', 'super_admin']) && 
+                        return auth()->user()->hasRole(['cfo', 'super_admin']) &&
                                in_array($record->status ?? 'pending', ['draft', 'pending']);
                     }),
-                
+
                 Tables\Actions\Action::make('reject')
                     ->label('Tolak')
                     ->color('danger')
@@ -458,37 +455,33 @@ class PenggajianResource extends Resource
                         Forms\Components\Textarea::make('rejection_note')
                             ->label('Alasan Penolakan')
                             ->required()
-                            ->placeholder('Jelaskan alasan penolakan...')
+                            ->placeholder('Jelaskan alasan penolakan...'),
                     ])
                     ->action(function ($record, array $data) {
                         $record->update([
                             'status' => 'rejected',
                             'approved_by' => auth()->id(),
-                            'approval_note' => 'Ditolak oleh ' . auth()->user()->name . ' pada ' . now()->format('d/m/Y H:i') . 
-                                             '. Alasan: ' . $data['rejection_note'],
+                            'approval_note' => 'Ditolak oleh '.auth()->user()->name.' pada '.now()->format('d/m/Y H:i').
+                                             '. Alasan: '.$data['rejection_note'],
                             'approved_at' => now(),
                         ]);
                     })
                     ->modalHeading('Tolak Penggajian')
                     ->modalSubmitActionLabel('Ya, Tolak')
                     ->visible(function ($record): bool {
-                        return auth()->user()->hasRole(['cfo', 'super_admin']) && 
+                        return auth()->user()->hasRole(['cfo', 'super_admin']) &&
                                in_array($record->status ?? 'pending', ['draft', 'pending']);
                     }),
-                
 
-                
                 Tables\Actions\EditAction::make()
                     ->label('Edit')
-                    ->visible(fn ($record): bool => 
-                        auth()->user()->hasRole(['super_admin']) || 
+                    ->visible(fn ($record): bool => auth()->user()->hasRole(['super_admin']) ||
                         (auth()->user()->hasRole(['cfo']) && in_array($record->status, ['pending', 'draft'])) ||
                         $record->status === 'draft'
                     ),
                 Tables\Actions\DeleteAction::make()
                     ->label('Hapus')
-                    ->visible(fn ($record): bool => 
-                        auth()->user()->hasRole(['super_admin']) || 
+                    ->visible(fn ($record): bool => auth()->user()->hasRole(['super_admin']) ||
                         $record->status === 'draft'
                     ),
             ])
@@ -514,7 +507,7 @@ class PenggajianResource extends Resource
             'edit' => Pages\EditPenggajian::route('/{record}/edit'),
         ];
     }
-    
+
     public static function updateTotalGaji(callable $set, callable $get): void
     {
         // Ambil semua nilai dari form
@@ -527,24 +520,24 @@ class PenggajianResource extends Resource
         $tunjanganHariRaya = (float) ($get('tunjangan_hari_raya') ?? 0);
         $tunjanganInsentif = (float) ($get('tunjangan_insentif') ?? 0);
         $tunjanganLainnya = (float) ($get('tunjangan_lainnya') ?? 0);
-        
+
         $potonganKasbon = (float) ($get('potongan_kasbon') ?? 0);
         $potonganTidakHadir = (float) ($get('potongan_tidak_hadir') ?? 0);
         $potonganPenyesuaianLainnya = (float) ($get('potongan_penyesuaian_lainnya') ?? 0);
         $potonganPph21 = (float) ($get('potongan_pph21') ?? 0);
-        
+
         // Hitung total tunjangan
-        $totalTunjangan = $tunjanganTransport + $tunjanganMakan + $tunjanganKomunikasi + 
-                         $tunjanganKesehatan + $tunjanganLembur + $tunjanganHariRaya + 
+        $totalTunjangan = $tunjanganTransport + $tunjanganMakan + $tunjanganKomunikasi +
+                         $tunjanganKesehatan + $tunjanganLembur + $tunjanganHariRaya +
                          $tunjanganInsentif + $tunjanganLainnya;
-        
+
         // Hitung total potongan
-        $totalPotongan = $potonganKasbon + $potonganTidakHadir + 
+        $totalPotongan = $potonganKasbon + $potonganTidakHadir +
                         $potonganPenyesuaianLainnya + $potonganPph21;
-        
+
         // Hitung total gaji
         $totalGaji = $gajiPokok + $totalTunjangan - $totalPotongan;
-        
+
         // Set nilai total gaji
         $set('total_gaji', $totalGaji);
     }

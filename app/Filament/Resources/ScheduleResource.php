@@ -3,28 +3,27 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ScheduleResource\Pages;
-use App\Filament\Resources\ScheduleResource\RelationManagers;
 use App\Models\Schedule;
+use Auth;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Auth;
 
 class ScheduleResource extends Resource
 {
     protected static ?string $model = Schedule::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-calendar-days';
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Manajemen Jadwal';
-    
+
     protected static ?string $modelLabel = 'Jadwal';
-    
+
     protected static ?string $pluralModelLabel = 'Jadwal';
 
     public static function form(Form $form): Form
@@ -51,10 +50,10 @@ class ScheduleResource extends Resource
                                     ->relationship('office', 'name')
                                     ->required(),
                                 Forms\Components\Toggle::make('is_wfa')
-                                    ->label('WFA')
-                            ])
-                    ])
-                
+                                    ->label('WFA'),
+                            ]),
+                    ]),
+
             ]);
     }
 
@@ -64,7 +63,7 @@ class ScheduleResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 $is_super_admin = Auth::user()->hasRole('super_admin');
 
-                if (!$is_super_admin) {
+                if (! $is_super_admin) {
                     $query->where('user_id', Auth::user()->id);
                 }
             })
@@ -79,7 +78,7 @@ class ScheduleResource extends Resource
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
                     ->label('Dilarang')
-                    ->hidden(fn () => !Auth::user()->hasRole('super_admin')),
+                    ->hidden(fn () => ! Auth::user()->hasRole('super_admin')),
                 Tables\Columns\BooleanColumn::make('is_wfa')
                     ->label('WFA'),
                 Tables\Columns\TextColumn::make('shift.name')

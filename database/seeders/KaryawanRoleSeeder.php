@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class KaryawanRoleSeeder extends Seeder
 {
@@ -12,7 +12,7 @@ class KaryawanRoleSeeder extends Seeder
     {
         // Create karyawan role if it doesn't exist
         $karyawanRole = Role::firstOrCreate(['name' => 'karyawan']);
-        
+
         // Create permissions for karyawan if they don't exist
         $permissions = [
             'view_attendance',
@@ -20,16 +20,16 @@ class KaryawanRoleSeeder extends Seeder
             'view_leave',
             'create_leave',
             'view_own_payroll',
-            'download_salary_slip'
+            'download_salary_slip',
         ];
-        
+
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
-        
+
         // Assign permissions to karyawan role
         $karyawanRole->syncPermissions($permissions);
-        
+
         $this->command->info('Karyawan role and permissions created successfully!');
     }
 }

@@ -96,4 +96,4 @@ return [
             'profile' => 'Profil',
         ],
     ],
-]; 
+];

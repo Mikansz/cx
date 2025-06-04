@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\OfficeResource\Pages;
 
-use Filament\Pages\Actions\Action;
 use Illuminate\Contracts\View\View;
 
 trait FooterScript
@@ -11,7 +10,7 @@ trait FooterScript
     {
         return view('filament.resources.office-resource.pages.map-search-footer');
     }
-    
+
     private function mapSearchScript(): string
     {
         return <<<'HTML'

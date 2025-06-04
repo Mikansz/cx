@@ -3,16 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AttendanceResource\Pages;
-use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
+use Auth;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Auth;
 
 class AttendanceResource extends Resource
 {
@@ -21,13 +19,13 @@ class AttendanceResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Manajemen Kehadiran';
-    
+
     protected static ?string $modelLabel = 'Absensi';
-    
+
     protected static ?string $pluralModelLabel = 'Absensi';
 
     protected static ?int $navigationSort = 1;
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -40,7 +38,7 @@ class AttendanceResource extends Resource
                             ->disabled()
                             ->required(),
                     ]),
-                
+
                 Forms\Components\Section::make('Jadwal')
                     ->schema([
                         Forms\Components\TextInput::make('schedule_latitude')
@@ -58,7 +56,7 @@ class AttendanceResource extends Resource
                             ->label('Waktu Selesai Jadwal')
                             ->required(),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Absensi Masuk')
                     ->schema([
                         Forms\Components\TextInput::make('start_latitude')
@@ -73,7 +71,7 @@ class AttendanceResource extends Resource
                             ->label('Waktu Datang')
                             ->required(),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Absensi Keluar')
                     ->schema([
                         Forms\Components\TextInput::make('end_latitude')
@@ -96,10 +94,10 @@ class AttendanceResource extends Resource
                 $userId = Auth::user()->id;
                 $is_super_admin = Auth::user()->hasRole('super_admin');
 
-                if (!$is_super_admin) {
+                if (! $is_super_admin) {
                     $query->where('attendances.user_id', Auth::user()->id);
                 }
-                
+
             })
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
@@ -132,7 +130,7 @@ class AttendanceResource extends Resource
                         'Terlambat & Pulang Duluan' => 'danger',
                     })
                     ->description(fn (Attendance $record): string => 'Durasi : '.$record->workDuration()),
-               
+
                 Tables\Columns\TextColumn::make('start_time')
                     ->label('Waktu Datang'),
                 Tables\Columns\TextColumn::make('end_time')
@@ -147,7 +145,7 @@ class AttendanceResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                
+
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
@@ -157,7 +155,7 @@ class AttendanceResource extends Resource
                             ->label('Bulan')
                             ->options([
                                 1 => 'Januari',
-                                2 => 'Februari', 
+                                2 => 'Februari',
                                 3 => 'Maret',
                                 4 => 'April',
                                 5 => 'Mei',
@@ -178,6 +176,7 @@ class AttendanceResource extends Resource
                                 for ($i = $currentYear - 5; $i <= $currentYear + 1; $i++) {
                                     $years[$i] = $i;
                                 }
+
                                 return $years;
                             })
                             ->default(date('Y'))
@@ -196,33 +195,33 @@ class AttendanceResource extends Resource
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        
+
                         if ($data['bulan'] ?? null) {
                             $bulanNames = [
                                 1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
                                 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-                                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
                             ];
-                            $indicators[] = 'Bulan: ' . $bulanNames[$data['bulan']];
+                            $indicators[] = 'Bulan: '.$bulanNames[$data['bulan']];
                         }
-                        
+
                         if ($data['tahun'] ?? null) {
-                            $indicators[] = 'Tahun: ' . $data['tahun'];
+                            $indicators[] = 'Tahun: '.$data['tahun'];
                         }
-                        
+
                         return $indicators;
                     }),
-                
+
                 Tables\Filters\Filter::make('hari_ini')
                     ->label('Hari Ini')
                     ->query(fn (Builder $query): Builder => $query->whereDate('created_at', today()))
                     ->toggle(),
-                
+
                 Tables\Filters\Filter::make('minggu_ini')
                     ->label('Minggu Ini')
                     ->query(fn (Builder $query): Builder => $query->whereBetween('created_at', [
                         now()->startOfWeek(),
-                        now()->endOfWeek()
+                        now()->endOfWeek(),
                     ]))
                     ->toggle(),
             ])

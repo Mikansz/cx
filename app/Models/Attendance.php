@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use App\Models\Leave;
 
 class Attendance extends Model
 {
@@ -24,8 +23,9 @@ class Attendance extends Model
         'end_longitude',
         'start_time',
         'end_time',
-        'is_leave'
+        'is_leave',
     ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -41,7 +41,7 @@ class Attendance extends Model
 
     public function isEarlyLeave()
     {
-        if (!$this->end_time || !$this->schedule_end_time) {
+        if (! $this->end_time || ! $this->schedule_end_time) {
             return false;
         }
 
@@ -64,5 +64,4 @@ class Attendance extends Model
         return "{$hours} jam {$minutes} menit";
 
     }
-
 }

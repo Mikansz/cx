@@ -4,16 +4,16 @@ namespace App\Filament\Resources\JabatanResource\Pages;
 
 use App\Filament\Resources\JabatanResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewJabatan extends ViewRecord
 {
     protected static string $resource = JabatanResource::class;
-    
+
     public function getTitle(): string
     {
         return "Detail Jabatan: {$this->record->nama_jabatan}";

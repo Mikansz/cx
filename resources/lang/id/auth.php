@@ -17,4 +17,4 @@ return [
     'password' => 'Kata sandi yang diberikan salah.',
     'throttle' => 'Terlalu banyak upaya masuk. Silakan coba lagi dalam :seconds detik.',
 
-]; 
+];

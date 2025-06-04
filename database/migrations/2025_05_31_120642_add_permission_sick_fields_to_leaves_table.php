@@ -31,13 +31,13 @@ return new class extends Migration
         Schema::table('leaves', function (Blueprint $table) {
             $table->dropColumn([
                 'permission_type',
-                'permission_start_time', 
+                'permission_start_time',
                 'permission_end_time',
                 'sick_certificate',
                 'symptoms',
                 'doctor_name',
                 'hospital_clinic',
-                'is_emergency'
+                'is_emergency',
             ]);
         });
     }

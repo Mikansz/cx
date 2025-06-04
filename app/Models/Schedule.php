@@ -12,7 +12,7 @@ class Schedule extends Model
 
     protected $casts = [
         'is_wfa' => 'boolean',
-        'is_banned' => 'boolean'
+        'is_banned' => 'boolean',
     ];
 
     protected $fillable = [
@@ -20,9 +20,8 @@ class Schedule extends Model
         'shift_id',
         'office_id',
         'is_wfa',
-        'is_banned'
+        'is_banned',
     ];
-
 
     public function user(): BelongsTo
     {

@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
 
 class Karyawan extends Model
 {
@@ -47,12 +47,12 @@ class Karyawan extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     public function jabatan(): BelongsTo
     {
         return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
-    
+
     public function penggajian(): HasMany
     {
         return $this->hasMany(Penggajian::class, 'karyawan_id', 'id');
@@ -122,12 +122,12 @@ class Karyawan extends Model
     {
         // Ambil total tunjangan dari penggajian terbaru
         $penggajianTerbaru = $this->penggajian()->latest()->first();
-        
-        if (!$penggajianTerbaru) {
+
+        if (! $penggajianTerbaru) {
             return 0;
         }
-        
-        return $penggajianTerbaru->tunjangan_transport + 
+
+        return $penggajianTerbaru->tunjangan_transport +
                $penggajianTerbaru->tunjangan_makan +
                $penggajianTerbaru->tunjangan_komunikasi +
                $penggajianTerbaru->tunjangan_kesehatan +
@@ -140,11 +140,11 @@ class Karyawan extends Model
     public function getTotalGaji(): float
     {
         $penggajianTerbaru = $this->penggajian()->latest()->first();
-        
-        if (!$penggajianTerbaru) {
+
+        if (! $penggajianTerbaru) {
             return $this->getGajiPokok();
         }
-        
+
         return $penggajianTerbaru->total_gaji;
     }
 }

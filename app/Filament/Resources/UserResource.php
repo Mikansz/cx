@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -19,10 +16,13 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationGroup = 'Manajemen Karyawan';
+
     protected static ?string $modelLabel = 'Pengguna';
+
     protected static ?string $pluralModelLabel = 'Pengguna';
 
     public static function form(Form $form): Form
@@ -52,9 +52,9 @@ class UserResource extends Resource
                                     })
                                     ->dehydrated(false), // Don't save this field directly
                                 Forms\Components\FileUpload::make('image')
-                                    ->label('Gambar')
-                            ])
-                        ]),
+                                    ->label('Gambar'),
+                            ]),
+                    ]),
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\Section::make()
@@ -68,9 +68,9 @@ class UserResource extends Resource
                                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                                     ->dehydrated(fn ($state) => filled($state))
                                     ->required(fn (string $context): bool => $context === 'create'),
-                                
-                            ])
-                    ])
+
+                            ]),
+                    ]),
             ]);
     }
 
@@ -79,28 +79,28 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
-                        ->label('Gambar')
-                        ->circular(),
+                    ->label('Gambar')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                        ->label('Nama')
+                    ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
-                        ->label('Email')
+                    ->label('Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
-                        ->label('Peran')
+                    ->label('Peran')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
-                        ->label('Email Diverifikasi Pada')
+                    ->label('Email Diverifikasi Pada')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                        ->label('Dibuat Pada')
+                    ->label('Dibuat Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                        ->label('Diperbarui Pada')
+                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -32,4 +32,4 @@ return [
         'restored' => 'Berhasil dipulihkan',
         'force_deleted' => 'Berhasil dihapus permanen',
     ],
-]; 
+];

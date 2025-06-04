@@ -23,12 +23,12 @@ class JabatanObserver
     {
         $year = date('y'); // Get last 2 digits of current year
         $prefix = "JBT{$year}";
-        
+
         // Get the last jabatan code for current year
         $lastJabatan = Jabatan::where('kode_jabatan', 'LIKE', "{$prefix}%")
             ->orderBy('kode_jabatan', 'desc')
             ->first();
-            
+
         if ($lastJabatan) {
             // Extract the number part and increment
             $lastNumber = (int) substr($lastJabatan->kode_jabatan, -3);
@@ -37,8 +37,8 @@ class JabatanObserver
             // First jabatan for this year
             $newNumber = 1;
         }
-        
+
         // Format with leading zeros (3 digits)
-        return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        return $prefix.str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 }

@@ -4,17 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'image'
+        'image',
     ];
 
     /**
@@ -58,19 +57,19 @@ class User extends Authenticatable
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? url('storage/' . $this->image) : null;
+        return $this->image ? url('storage/'.$this->image) : null;
     }
 
     public function karyawan(): HasOne
     {
         return $this->hasOne(Karyawan::class);
     }
-    
+
     public function overtimes(): HasMany
     {
         return $this->hasMany(Overtime::class);
     }
-    
+
     /**
      * Assign a single role to the user, removing all other roles
      */
@@ -78,11 +77,11 @@ class User extends Authenticatable
     {
         // Remove all existing roles
         $this->syncRoles([]);
-        
+
         // Assign the new role
         $this->assignRole($role);
     }
-    
+
     /**
      * Get the primary role of the user (first role if multiple exist)
      */
@@ -90,7 +89,7 @@ class User extends Authenticatable
     {
         return $this->roles()->first()?->name;
     }
-    
+
     /**
      * Check if user has multiple roles (for validation)
      */

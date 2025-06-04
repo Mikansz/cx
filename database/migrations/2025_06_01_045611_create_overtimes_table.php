@@ -22,12 +22,13 @@ return new class extends Migration
             $table->enum('type', ['weekday', 'weekend', 'holiday'])->default('weekday'); // Type of overtime
             $table->decimal('rate_per_hour', 10, 2)->default(0); // Rate per hour for this overtime
             $table->decimal('total_amount', 12, 2)->default(0); // Total overtime payment
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('approved');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->text('approval_note')->nullable();
             $table->boolean('is_calculated')->default(false); // Whether included in payroll calculation
             $table->timestamps();
-            
+
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            
+
             // Ensure no duplicate overtime for same user on same date
             $table->unique(['user_id', 'date']);
         });

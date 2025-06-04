@@ -6,28 +6,29 @@ use App\Filament\Resources\JabatanResource\Pages;
 use App\Filament\Resources\JabatanResource\RelationManagers;
 use App\Models\Jabatan;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\TextInput;
 
 class JabatanResource extends Resource
 {
     protected static ?string $model = Jabatan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+
     protected static ?string $navigationGroup = 'Data Master';
+
     protected static ?string $navigationLabel = 'Data Jabatan';
-    
+
     protected static ?string $modelLabel = 'Jabatan';
-    
+
     protected static ?string $pluralModelLabel = 'Data Jabatan';
-    
+
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'nama_jabatan';
@@ -49,7 +50,7 @@ class JabatanResource extends Resource
                             ->required()
                             ->maxLength(255),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Kompensasi')
                     ->schema([
                         Forms\Components\TextInput::make('gaji_pokok')
@@ -78,7 +79,7 @@ class JabatanResource extends Resource
     {
         return $table
             ->columns([
-                
+
                 Tables\Columns\TextColumn::make('nama_jabatan')
                     ->label('Nama Jabatan')
                     ->searchable()

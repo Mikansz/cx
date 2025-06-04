@@ -3,17 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\LeaveResource\Pages;
-use App\Filament\Resources\LeaveResource\RelationManagers;
 use App\Models\Leave;
+use Auth;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Actions\Action;
-use Auth;
 
 class LeaveResource extends Resource
 {
@@ -22,11 +20,11 @@ class LeaveResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-m-minus-circle';
 
     protected static ?string $navigationGroup = 'Manajemen Kehadiran';
-    
+
     protected static ?string $modelLabel = 'Cuti';
-    
+
     protected static ?string $pluralModelLabel = 'Cuti';
-    
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
@@ -50,7 +48,7 @@ class LeaveResource extends Resource
                         ->columnSpanFull(),
                 ]),
         ];
-    
+
         if (Auth::user()->hasRole(['super_admin', 'hrd'])) {
             $schema[] = Forms\Components\Section::make('Persetujuan')
                 ->schema([
@@ -64,10 +62,10 @@ class LeaveResource extends Resource
                         ->label('Status'),
                     Forms\Components\Textarea::make('note')
                         ->label('Catatan')
-                        ->columnSpanFull()
+                        ->columnSpanFull(),
                 ]);
         }
-    
+
         return $form->schema($schema);
     }
 
@@ -77,12 +75,12 @@ class LeaveResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 $canApprove = Auth::user()->hasRole(['super_admin', 'hrd']);
 
-                if (!$canApprove) {
+                if (! $canApprove) {
                     $query->where('user_id', Auth::user()->id);
                 }
             })
             ->columns([
-                
+
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama')
                     ->sortable(),
@@ -123,7 +121,7 @@ class LeaveResource extends Resource
                             default => 'gray',
                         };
                     })
-                    ->description(fn (Leave $record): ?string => $record->note ?? null )
+                    ->description(fn (Leave $record): ?string => $record->note ?? null)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -151,12 +149,12 @@ class LeaveResource extends Resource
                         'rejected' => 'Ditolak',
                     ])
                     ->placeholder('Semua Status'),
-                
+
                 Tables\Filters\SelectFilter::make('leave_type')
                     ->label('Jenis Cuti')
                     ->options(Leave::getLeaveTypes())
                     ->placeholder('Semua Jenis'),
-                
+
                 Tables\Filters\Filter::make('pending_approval')
                     ->label('Menunggu Persetujuan')
                     ->query(fn (Builder $query): Builder => $query->where('status', 'pending'))
@@ -171,17 +169,16 @@ class LeaveResource extends Resource
                     ->action(function (Leave $record) {
                         $record->update([
                             'status' => 'approved',
-                            'note' => 'Disetujui oleh ' . Auth::user()->name . ' pada ' . now()->format('d/m/Y H:i')
+                            'note' => 'Disetujui oleh '.Auth::user()->name.' pada '.now()->format('d/m/Y H:i'),
                         ]);
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Setujui Pengajuan Cuti')
                     ->modalDescription('Apakah Anda yakin ingin menyetujui pengajuan cuti ini?')
                     ->modalSubmitActionLabel('Ya, Setujui')
-                    ->visible(fn (Leave $record): bool => 
-                        Auth::user()->hasRole(['super_admin', 'hrd']) && $record->status === 'pending'
+                    ->visible(fn (Leave $record): bool => Auth::user()->hasRole(['super_admin', 'hrd']) && $record->status === 'pending'
                     ),
-                
+
                 Action::make('reject')
                     ->label('Tolak')
                     ->color('danger')
@@ -190,21 +187,20 @@ class LeaveResource extends Resource
                         Forms\Components\Textarea::make('rejection_note')
                             ->label('Alasan Penolakan')
                             ->required()
-                            ->placeholder('Jelaskan alasan penolakan...')
+                            ->placeholder('Jelaskan alasan penolakan...'),
                     ])
                     ->action(function (Leave $record, array $data) {
                         $record->update([
                             'status' => 'rejected',
-                            'note' => 'Ditolak oleh ' . Auth::user()->name . ' pada ' . now()->format('d/m/Y H:i') . 
-                                     '. Alasan: ' . $data['rejection_note']
+                            'note' => 'Ditolak oleh '.Auth::user()->name.' pada '.now()->format('d/m/Y H:i').
+                                     '. Alasan: '.$data['rejection_note'],
                         ]);
                     })
                     ->modalHeading('Tolak Pengajuan Cuti')
                     ->modalSubmitActionLabel('Ya, Tolak')
-                    ->visible(fn (Leave $record): bool => 
-                        Auth::user()->hasRole(['super_admin', 'hrd']) && $record->status === 'pending'
+                    ->visible(fn (Leave $record): bool => Auth::user()->hasRole(['super_admin', 'hrd']) && $record->status === 'pending'
                     ),
-                
+
                 Action::make('slip_cuti')
                     ->label('Slip Cuti')
                     ->color('info')
@@ -212,11 +208,10 @@ class LeaveResource extends Resource
                     ->url(fn (Leave $record): string => route('leave.slip.download', $record))
                     ->openUrlInNewTab()
                     ->visible(fn (Leave $record): bool => $record->status === 'approved'),
-                
+
                 Tables\Actions\EditAction::make()
                     ->label('Edit')
-                    ->visible(fn (Leave $record): bool => 
-                        Auth::user()->hasRole(['super_admin', 'hrd']) || 
+                    ->visible(fn (Leave $record): bool => Auth::user()->hasRole(['super_admin', 'hrd']) ||
                         (Auth::user()->id === $record->user_id && $record->status === 'pending')
                     ),
             ])

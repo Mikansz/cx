@@ -2,21 +2,21 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Attendance;
+use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use App\Models\User;
-
 use Filament\Forms\Form;
-use Filament\Forms;
-use Filament\Forms\Set;
+use Livewire\Component;
 
 class Map extends Component implements HasForms
 {
     use InteractsWithForms;
+
     public $markers = [];
+
     public $created_at = '';
+
     public $search = '';
 
     public function mount(): void
@@ -48,7 +48,7 @@ class Map extends Component implements HasForms
                                 $this->filterAttendance();
                             }),
                     ]),
-                
+
             ]);
     }
 
@@ -60,20 +60,18 @@ class Map extends Component implements HasForms
     public function filterAttendance()
     {
         $query = Attendance::with('user');
-        
+
         if ($this->created_at) {
             $query->whereDate('created_at', $this->created_at);
         }
-        
+
         if ($this->search && strlen(trim($this->search)) > 0) {
             $query->whereHas('user', function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%');
+                $q->where('name', 'like', '%'.$this->search.'%');
             });
         }
-        
+
         $this->markers = $query->get();
         $this->dispatch('markersUpdated');
     }
-
-    
 }

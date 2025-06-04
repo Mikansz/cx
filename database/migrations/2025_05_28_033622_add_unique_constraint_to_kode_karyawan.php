@@ -16,21 +16,21 @@ return new class extends Migration
             ->groupBy('kode_karyawan')
             ->havingRaw('COUNT(*) > 1')
             ->pluck('kode_karyawan');
-            
+
         foreach ($duplicates as $duplicateCode) {
             $karyawans = \App\Models\Karyawan::where('kode_karyawan', $duplicateCode)
                 ->orderBy('id')
                 ->get();
-                
+
             // Keep the first one, update the others
             foreach ($karyawans->skip(1) as $index => $karyawan) {
                 $year = date('y');
                 $newNumber = $karyawan->id + 1000; // Use ID + offset to ensure uniqueness
-                $newCode = 'KRY' . $year . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+                $newCode = 'KRY'.$year.str_pad($newNumber, 3, '0', STR_PAD_LEFT);
                 $karyawan->update(['kode_karyawan' => $newCode]);
             }
         }
-        
+
         // Now add unique constraint
         Schema::table('karyawan', function (Blueprint $table) {
             $table->unique('kode_karyawan');

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CFORoleSeeder extends Seeder
@@ -14,7 +13,7 @@ class CFORoleSeeder extends Seeder
     {
         // Create CFO role if not exists
         $cfoRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'cfo']);
-        
+
         // Create permissions for CFO
         $permissions = [
             'view_penggajian',
@@ -27,14 +26,14 @@ class CFORoleSeeder extends Seeder
             'view_reports',
             'manage_finance',
         ];
-        
+
         foreach ($permissions as $permission) {
             \Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission]);
         }
-        
+
         // Assign permissions to CFO role
         $cfoRole->syncPermissions($permissions);
-        
+
         $this->command->info('CFO role and permissions created successfully!');
     }
 }

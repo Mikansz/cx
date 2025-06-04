@@ -13,23 +13,23 @@ return new class extends Migration
     {
         Schema::table('karyawan', function (Blueprint $table) {
             // Tambahkan kolom-kolom yang hilang
-            if (!Schema::hasColumn('karyawan', 'no_ktp')) {
+            if (! Schema::hasColumn('karyawan', 'no_ktp')) {
                 $table->string('no_ktp')->after('tanggal_lahir');
             }
-            
-            if (!Schema::hasColumn('karyawan', 'agama')) {
+
+            if (! Schema::hasColumn('karyawan', 'agama')) {
                 $table->string('agama')->after('jenis_kelamin');
             }
-            
-            if (!Schema::hasColumn('karyawan', 'no_telp')) {
+
+            if (! Schema::hasColumn('karyawan', 'no_telp')) {
                 $table->string('no_telp')->nullable()->after('no_hp');
             }
-            
-            if (!Schema::hasColumn('karyawan', 'bank')) {
+
+            if (! Schema::hasColumn('karyawan', 'bank')) {
                 $table->string('bank')->nullable()->after('alamat');
             }
-            
-            if (!Schema::hasColumn('karyawan', 'no_rek')) {
+
+            if (! Schema::hasColumn('karyawan', 'no_rek')) {
                 $table->string('no_rek')->nullable()->after('bank');
             }
         });

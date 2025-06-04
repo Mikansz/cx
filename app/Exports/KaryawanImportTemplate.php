@@ -3,16 +3,13 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class KaryawanImportTemplate implements FromArray, WithHeadings, WithStyles, ShouldAutoSize
+class KaryawanImportTemplate implements FromArray, ShouldAutoSize, WithHeadings, WithStyles
 {
-    /**
-    * @return array
-    */
     public function array(): array
     {
         // Contoh data untuk template
@@ -35,9 +32,6 @@ class KaryawanImportTemplate implements FromArray, WithHeadings, WithStyles, Sho
         ];
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
@@ -57,9 +51,6 @@ class KaryawanImportTemplate implements FromArray, WithHeadings, WithStyles, Sho
         ];
     }
 
-    /**
-     * @param Worksheet $sheet
-     */
     public function styles(Worksheet $sheet)
     {
         return [

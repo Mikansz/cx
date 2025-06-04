@@ -5,7 +5,6 @@ namespace App\Exports;
 use App\Models\Attendance;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Support\Facades\Schema;
 
 class AttendanceExport implements FromQuery, WithHeadings
 {
@@ -27,13 +26,10 @@ class AttendanceExport implements FromQuery, WithHeadings
                 'attendances.end_time',
                 'attendances.end_latitude',
                 'attendances.end_longitude',
-                'attendances.is_leave as is_wfa'
+                'attendances.is_leave as is_wfa',
             ]);
     }
 
-    /**
-    * @return array
-    */
     public function headings(): array
     {
         return [
@@ -50,9 +46,9 @@ class AttendanceExport implements FromQuery, WithHeadings
             'End Time',
             'End Latitude',
             'End Longitude',
-            'Is WFA'
+            'Is WFA',
         ];
     }
 }
 
-//gwr
+// gwr

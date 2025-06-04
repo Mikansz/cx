@@ -71,4 +71,4 @@ return [
     'summary' => [
         'heading' => 'Ringkasan',
     ],
-]; 
+];

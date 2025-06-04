@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class HRDRoleSeeder extends Seeder
@@ -14,11 +13,11 @@ class HRDRoleSeeder extends Seeder
     {
         // Create HRD role if not exists
         $hrdRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'hrd']);
-        
+
         // Create permissions for HRD
         $permissions = [
             'view_leave',
-            'create_leave', 
+            'create_leave',
             'update_leave',
             'approve_leave',
             'reject_leave',
@@ -31,14 +30,14 @@ class HRDRoleSeeder extends Seeder
             'update_penggajian',
             'view_jabatan',
         ];
-        
+
         foreach ($permissions as $permission) {
             \Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission]);
         }
-        
+
         // Assign permissions to HRD role
         $hrdRole->syncPermissions($permissions);
-        
+
         $this->command->info('HRD role and permissions created successfully!');
     }
 }

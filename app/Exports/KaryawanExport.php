@@ -12,16 +12,13 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithStyles
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         return Karyawan::with('user')->get();
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return [
@@ -39,13 +36,12 @@ class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithS
             'Bank',
             'No Rekening',
             'Tanggal Dibuat',
-            'Tanggal Diperbarui'
+            'Tanggal Diperbarui',
         ];
     }
 
     /**
-     * @param mixed $row
-     * @return array
+     * @param  mixed  $row
      */
     public function map($row): array
     {
@@ -64,13 +60,10 @@ class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithS
             $row->bank,
             $row->no_rek,
             $row->created_at->format('d/m/Y H:i:s'),
-            $row->updated_at->format('d/m/Y H:i:s')
+            $row->updated_at->format('d/m/Y H:i:s'),
         ];
     }
 
-    /**
-     * @param Worksheet $sheet
-     */
     public function styles(Worksheet $sheet)
     {
         return [

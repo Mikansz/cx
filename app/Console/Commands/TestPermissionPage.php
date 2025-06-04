@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Leave;
+use Illuminate\Console\Command;
 
 class TestPermissionPage extends Command
 {
@@ -27,12 +27,12 @@ class TestPermissionPage extends Command
     public function handle()
     {
         $this->info('Testing permission page functionality...');
-        
+
         // Check if there are permission records
         $permissionRecords = Leave::where('leave_type', Leave::IZIN)->get();
-        
+
         $this->line("Total permission records: {$permissionRecords->count()}");
-        
+
         if ($permissionRecords->count() > 0) {
             foreach ($permissionRecords as $permission) {
                 $this->line("Permission ID: {$permission->id}");
@@ -45,7 +45,7 @@ class TestPermissionPage extends Command
             }
         } else {
             $this->info('No permission records found. Creating a test record...');
-            
+
             // Create a test permission record
             $testUser = \App\Models\User::first();
             if ($testUser) {
@@ -60,13 +60,13 @@ class TestPermissionPage extends Command
                     'reason' => 'Test permission request',
                     'status' => 'pending',
                 ]);
-                
+
                 $this->info('✅ Test permission record created!');
             } else {
                 $this->error('No users found to create test record.');
             }
         }
-        
+
         $this->info('✅ Permission page test completed!');
     }
 }

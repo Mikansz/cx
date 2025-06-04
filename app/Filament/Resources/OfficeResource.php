@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OfficeResource\Pages;
-use App\Filament\Resources\OfficeResource\RelationManagers;
 use App\Models\Office;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Humaidem\FilamentMapPicker\Fields\OSMMap;
 
 class OfficeResource extends Resource
@@ -23,9 +20,9 @@ class OfficeResource extends Resource
     protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationGroup = 'Manajemen Lokasi';
-    
+
     protected static ?string $modelLabel = 'Lokasi Kantor';
-    
+
     protected static ?string $pluralModelLabel = 'Lokasi Kantor';
 
     public static function form(Form $form): Form
@@ -50,18 +47,18 @@ class OfficeResource extends Resource
                                     ])
                                     ->extraControl([
                                         'lat' => 0, 'lng' => 0,
-                                        'zoomDelta'           => 1,
-                                        'zoomSnap'            => 0.25,
-                                        'wheelPxPerZoomLevel' => 60
+                                        'zoomDelta' => 1,
+                                        'zoomSnap' => 0.25,
+                                        'wheelPxPerZoomLevel' => 60,
                                     ])
 
                                     ->afterStateHydrated(function (Forms\Get $get, Forms\Set $set, $record) {
                                         if ($record) {
                                             $latitude = $record->latitude;
                                             $longitude = $record->longitude;
-                            
+
                                             if ($latitude && $longitude) {
-                                                    $set('location', ['lat' => $latitude, 'lng' => $longitude]);
+                                                $set('location', ['lat' => $latitude, 'lng' => $longitude]);
                                             }
                                         }
                                     })
@@ -74,31 +71,30 @@ class OfficeResource extends Resource
                                     ->schema([
                                         Forms\Components\TextInput::make('latitude')
                                             ->label('Garis Lintang')
- ->default(0)
+                                            ->default(0)
                                             ->required()
                                             ->numeric(),
                                         Forms\Components\TextInput::make('longitude')
                                             ->label('Garis Bujur')
- ->default(0)
+                                            ->default(0)
                                             ->required()
                                             ->numeric(),
-                                    ])->columns(2)
-                               
-                                
-                            ])
-                        
-                ]),
+                                    ])->columns(2),
+
+                            ]),
+
+                    ]),
                 Forms\Components\Group::make()
-                        ->schema([
-                            Forms\Components\Section::make()
-                                ->schema([
-                                    Forms\Components\TextInput::make('radius')
-                                        ->label('Radius')
-                                        ->required()
-                                        ->numeric(),
-                                ])
-                        ])  
-                
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->schema([
+                                Forms\Components\TextInput::make('radius')
+                                    ->label('Radius')
+                                    ->required()
+                                    ->numeric(),
+                            ]),
+                    ]),
+
             ]);
     }
 
@@ -165,4 +161,4 @@ class OfficeResource extends Resource
     }
 }
 
-//diasodasd
+// diasodasd

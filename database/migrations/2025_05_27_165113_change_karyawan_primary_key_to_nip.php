@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // Update NULL values first
         \DB::table('karyawan')->whereNull('kode_karyawan')->orWhere('kode_karyawan', '')->update(['kode_karyawan' => 'KRY25999']);
-        
+
         Schema::table('karyawan', function (Blueprint $table) {
             // Ubah tipe data kolom yang perlu - nullable dulu untuk menghindari error
             $table->string('nip', 12)->nullable()->change();
@@ -26,11 +26,11 @@ return new class extends Migration
             $table->string('bank', 30)->nullable()->change();
             $table->string('no_rek', 25)->nullable()->change();
         });
-        
+
         // Update jenis kelamin data dari string ke enum
         \DB::table('karyawan')->where('jenis_kelamin', 'Laki-laki')->update(['jenis_kelamin' => 'L']);
         \DB::table('karyawan')->where('jenis_kelamin', 'Perempuan')->update(['jenis_kelamin' => 'P']);
-        
+
         Schema::table('karyawan', function (Blueprint $table) {
             // Ubah jenis_kelamin ke enum setelah data diupdate
             \DB::statement("ALTER TABLE karyawan MODIFY jenis_kelamin ENUM('L', 'P') NOT NULL COMMENT 'L=Laki-laki, P=Perempuan'");
@@ -45,7 +45,7 @@ return new class extends Migration
         // Update enum back to string values
         \DB::table('karyawan')->where('jenis_kelamin', 'L')->update(['jenis_kelamin' => 'Laki-laki']);
         \DB::table('karyawan')->where('jenis_kelamin', 'P')->update(['jenis_kelamin' => 'Perempuan']);
-        
+
         Schema::table('karyawan', function (Blueprint $table) {
             // Revert column types
             $table->string('jenis_kelamin')->change();

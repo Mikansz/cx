@@ -3,30 +3,27 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ShiftResource\Pages;
-use App\Filament\Resources\ShiftResource\RelationManagers;
 use App\Models\Shift;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ShiftResource extends Resource
 {
     protected static ?string $model = Shift::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
-    
+
     protected static ?string $navigationGroup = 'Manajemen Jadwal';
-    
+
     protected static ?string $navigationLabel = 'Shift Kerja';
-    
+
     protected static ?string $modelLabel = 'Shift Kerja';
-    
+
     protected static ?string $pluralModelLabel = 'Shift Kerja';
-    
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
@@ -40,7 +37,7 @@ class ShiftResource extends Resource
                             ->required()
                             ->maxLength(255),
                     ]),
-                
+
                 Forms\Components\Section::make('Jam Kerja')
                     ->schema([
                         Forms\Components\TimePicker::make('start_time')

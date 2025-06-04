@@ -3,43 +3,34 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\KaryawanResource\Pages;
-use App\Filament\Resources\KaryawanResource\RelationManagers;
 use App\Models\Karyawan;
-use App\Models\Jabatan;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Actions\Action;
-use Filament\Actions\Action as HeaderAction;
-use Filament\Actions\Exports\Enums\ExportFormat;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\Filter;
-use Filament\Forms\Components\DatePicker;
-use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Columns\Layout\Split;
-use Filament\Tables\Columns\Layout\Stack;
+use Illuminate\Database\Eloquent\Model;
 
 class KaryawanResource extends Resource
 {
     protected static ?string $model = Karyawan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    
+
     protected static ?string $navigationGroup = 'Manajemen Karyawan';
-    
+
     protected static ?string $navigationLabel = 'Data Karyawan';
-    
+
     protected static ?string $modelLabel = 'Karyawan';
-    
+
     protected static ?string $pluralModelLabel = 'Data Karyawan';
-    
+
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'user.name';
@@ -56,37 +47,37 @@ class KaryawanResource extends Resource
                             ->reactive()
                             ->helperText('Aktifkan untuk membuat akun pengguna baru')
                             ->hiddenOn('edit'),
-                        
+
                         Forms\Components\Select::make('user_id')
                             ->label(fn (?string $context) => $context === 'edit' ? 'Pengguna' : 'Pilih Pengguna Existing')
                             ->options(function (?string $context, ?Model $record) {
                                 $query = User::query();
-                                
+
                                 // Exclude users who are already karyawan
                                 $query->whereNotIn('id', function ($subQuery) use ($record) {
                                     $subQuery->select('user_id')
                                         ->from('karyawan')
                                         ->whereNotNull('user_id');
-                                    
+
                                     // If editing, exclude current record
                                     if ($record && $record->exists) {
                                         $subQuery->where('id', '!=', $record->id);
                                     }
                                 });
-                                
+
                                 return $query->pluck('name', 'id');
                             })
                             ->searchable()
-                            ->visible(fn (callable $get, ?string $context) => $context === 'edit' || !$get('create_new_user'))
-                            ->required(fn (callable $get, ?string $context) => $context === 'edit' || !$get('create_new_user')),
-                        
+                            ->visible(fn (callable $get, ?string $context) => $context === 'edit' || ! $get('create_new_user'))
+                            ->required(fn (callable $get, ?string $context) => $context === 'edit' || ! $get('create_new_user')),
+
                         Forms\Components\TextInput::make('user_name')
                             ->label('Nama Lengkap')
                             ->required(fn (callable $get) => $get('create_new_user'))
                             ->visible(fn (callable $get) => $get('create_new_user'))
                             ->hiddenOn('edit')
                             ->maxLength(255),
-                        
+
                         Forms\Components\TextInput::make('user_email')
                             ->label('Email')
                             ->email()
@@ -97,9 +88,10 @@ class KaryawanResource extends Resource
                             ->maxLength(255)
                             ->default(function () {
                                 $randomNumber = mt_rand(100, 999);
+
                                 return "karyawan{$randomNumber}@rhi.com";
                             }),
-                        
+
                         Forms\Components\TextInput::make('user_password')
                             ->label('Password')
                             ->password()
@@ -121,7 +113,7 @@ class KaryawanResource extends Resource
                             ->maxLength(12)
                             ->helperText('Maksimal 12 karakter'),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Data Pribadi')
                     ->schema([
                         Forms\Components\TextInput::make('tempat_lahir')
@@ -161,7 +153,7 @@ class KaryawanResource extends Resource
                             ->native(false)
                             ->helperText('Maksimal 20 karakter'),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Kontak')
                     ->schema([
                         Forms\Components\TextInput::make('no_hp')
@@ -180,7 +172,7 @@ class KaryawanResource extends Resource
                             ->required()
                             ->columnSpanFull(),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Informasi Bank')
                     ->schema([
                         Forms\Components\TextInput::make('bank')
@@ -192,7 +184,7 @@ class KaryawanResource extends Resource
                             ->maxLength(25)
                             ->helperText('Maksimal 25 karakter'),
                     ])->columns(2),
-                
+
                 Forms\Components\Section::make('Jabatan & Foto')
                     ->schema([
                         Forms\Components\Select::make('jabatan_id')
@@ -217,7 +209,7 @@ class KaryawanResource extends Resource
                     ->label('Foto')
                     ->circular()
                     ->size(40),
-                
+
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama Lengkap')
                     ->searchable()
