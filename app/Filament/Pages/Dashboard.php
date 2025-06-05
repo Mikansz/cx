@@ -14,6 +14,7 @@ use App\Filament\Widgets\Karyawan\PersonalPayrollWidget;
 use App\Filament\Widgets\SuperAdmin\SystemOverviewWidget;
 use App\Filament\Widgets\SuperAdmin\UserStatsWidget;
 use App\Filament\Widgets\SuperAdmin\ActivityLogWidget;
+use App\Filament\Widgets\LocationSearchWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +35,7 @@ class Dashboard extends BaseDashboard
                 SystemOverviewWidget::class,
                 UserStatsWidget::class,
                 ActivityLogWidget::class,
+                LocationSearchWidget::class,
                 // Tambahan widget admin lainnya
                 EmployeeStatsWidget::class,
                 AttendanceOverviewWidget::class,
@@ -46,6 +48,7 @@ class Dashboard extends BaseDashboard
                 EmployeeStatsWidget::class,
                 AttendanceOverviewWidget::class,
                 LeaveRequestsWidget::class,
+                LocationSearchWidget::class,
             ];
         }
         // Widget untuk CFO
@@ -54,6 +57,7 @@ class Dashboard extends BaseDashboard
                 FinancialOverviewWidget::class,
                 PayrollStatsWidget::class,
                 MonthlyRevenueChart::class,
+                LocationSearchWidget::class,
             ];
         }
         // Widget untuk Karyawan

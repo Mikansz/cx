@@ -1,24 +1,28 @@
 <div class="grid grid-cols-1 dark:bg-gray-900 md:grid-cols-12 gap-4">
-    <div class="md:col-span-12 bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-        <form wire:submit.prevent="filterAttendance">
-            {{ $this->form }}
-        </form>
-        <div class="mt-4 text-sm text-black dark:text-white font-medium">
-            {{ count($markers) }} karyawan ditemukan
+    <div wire:ignore class="md:col-span-12">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-4">
+            <form wire:submit.prevent="filterAttendance">
+                {{ $this->form }}
+            </form>
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-300">
+                {{ count($markers) }} karyawan ditemukan
+            </div>
         </div>
-    </div>
-    
-    <div class="md:col-span-12 bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-        <div wire:ignore>
-            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-            <div id="map" class="w-full" style="height: 75vh;"></div>
-            <script>
-            let map;
-            function initializeMap() {
-                if (map) {
-                    map.remove();
-                }
+
+        <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+            <div id="map" class="w-full" style="height: 75vh;"></div> <!-- Dynamic height based on viewport -->
+        </div>
+
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        @vite('resources/js/map-search.js')
+        <script>
+    let map;
+    function initializeMap() {
+        if (map) {
+            map.remove();
+        }
 
                 map = L.map('map').setView([-0.089275, 121.921327], 4.5);
 
