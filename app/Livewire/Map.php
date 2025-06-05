@@ -33,7 +33,7 @@ class Map extends Component implements HasForms
                     ->schema([
                         Forms\Components\DatePicker::make('created_at')
                             ->label('Tanggal')
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(function ($state) {
                                 $this->created_at = $state;
                                 $this->filterAttendance();
@@ -41,14 +41,13 @@ class Map extends Component implements HasForms
                         Forms\Components\TextInput::make('search')
                             ->label('Cari Karyawan')
                             ->placeholder('Masukkan nama karyawan')
-                            ->reactive()
-                            ->debounce(500)
+                            ->live(debounce: 500)
                             ->afterStateUpdated(function ($state) {
                                 $this->search = $state;
                                 $this->filterAttendance();
                             }),
-                    ]),
-
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -59,7 +58,9 @@ class Map extends Component implements HasForms
 
     public function filterAttendance()
     {
-        $query = Attendance::with('user');
+        $query = Attendance::with('user')
+            ->whereNotNull('start_latitude')
+            ->whereNotNull('start_longitude');
 
         if ($this->created_at) {
             $query->whereDate('created_at', $this->created_at);
@@ -67,11 +68,11 @@ class Map extends Component implements HasForms
 
         if ($this->search && strlen(trim($this->search)) > 0) {
             $query->whereHas('user', function ($q) {
-                $q->where('name', 'like', '%'.$this->search.'%');
+                $q->where('name', 'like', '%' . $this->search . '%');
             });
         }
 
-        $this->markers = $query->get();
+        $this->markers = $query->orderBy('created_at', 'desc')->get();
         $this->dispatch('markersUpdated');
     }
 }

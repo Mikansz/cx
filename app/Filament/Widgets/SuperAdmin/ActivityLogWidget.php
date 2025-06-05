@@ -29,6 +29,7 @@ class ActivityLogWidget extends BaseWidget
                 // Gabungkan query dari berbagai model untuk menampilkan aktivitas terbaru
                 User::query()
                     ->select([
+                        \DB::raw("CONCAT('user_', users.id) as id"),
                         'users.name as user_name',
                         'users.created_at',
                         \DB::raw("'User Registration' as activity_type"),
@@ -38,6 +39,7 @@ class ActivityLogWidget extends BaseWidget
                         Attendance::query()
                             ->join('users', 'attendances.user_id', '=', 'users.id')
                             ->select([
+                                \DB::raw("CONCAT('attendance_', attendances.id) as id"),
                                 'users.name as user_name',
                                 'attendances.created_at',
                                 \DB::raw("'Attendance' as activity_type"),
@@ -50,6 +52,7 @@ class ActivityLogWidget extends BaseWidget
                         Leave::query()
                             ->join('users', 'leaves.user_id', '=', 'users.id')
                             ->select([
+                                \DB::raw("CONCAT('leave_', leaves.id) as id"),
                                 'users.name as user_name',
                                 'leaves.created_at',
                                 \DB::raw("'Leave Request' as activity_type"),

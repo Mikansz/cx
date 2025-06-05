@@ -11,47 +11,61 @@
             margin: 15px;
             color: #000;
             background: white;
+            line-height: 1.4;
         }
         .slip-container {
             border: 2px solid #000;
             padding: 20px;
-            max-width: 700px;
+            max-width: 650px;
             margin: 0 auto;
         }
         .header {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 15px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2C5530;
+            padding-bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .company-logo {
-            width: 80px;
-            height: 60px;
-            background: #D2B48C;
-            border: 1px solid #000;
+            width: 90px;
+            height: 70px;
+            background: linear-gradient(135deg, #2C5530, #4a7c59);
+            border: 2px solid #2C5530;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 9px;
             text-align: center;
-            margin-right: 20px;
+            margin-right: 25px;
             flex-shrink: 0;
+            color: white;
+            border-radius: 5px;
         }
         .header-content {
             flex: 1;
         }
         .slip-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            color: #2C5530;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .slip-number {
-            font-size: 12px;
+            font-size: 14px;
             text-align: center;
             font-weight: bold;
-            color: #666;
+            color: #2C5530;
+            background: #e8f5e8;
+            padding: 5px 15px;
+            border-radius: 15px;
+            display: inline-block;
         }
         .company-address {
             font-size: 10px;
@@ -59,83 +73,103 @@
             margin-top: 5px;
         }
         .content-section {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .section-title {
-            background-color: #2C5530;
+            background: linear-gradient(135deg, #2C5530, #4a7c59);
             color: white;
-            padding: 8px 12px;
+            padding: 12px 18px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 14px;
             margin-bottom: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 0;
         }
         .info-table td {
-            border: 1px solid #666;
-            padding: 8px 12px;
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 18px;
             vertical-align: top;
         }
         .info-label {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
             font-weight: bold;
-            width: 30%;
+            width: 35%;
+            color: #2C5530;
         }
         .leave-type-badge {
-            background-color: #e8f5e8;
+            background: linear-gradient(135deg, #e8f5e8, #d4edda);
             color: #2C5530;
-            padding: 4px 8px;
-            border-radius: 3px;
+            padding: 6px 12px;
+            border-radius: 15px;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             display: inline-block;
+            border: 1px solid #2C5530;
         }
         .status-approved {
-            background-color: #d4edda;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
             color: #155724;
-            padding: 4px 8px;
-            border-radius: 3px;
+            padding: 6px 12px;
+            border-radius: 15px;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
             display: inline-block;
+            border: 1px solid #155724;
         }
         .footer-section {
-            margin-top: 30px;
+            margin-top: 40px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .approval-info {
             flex: 1;
-            padding-right: 20px;
+            padding-right: 25px;
         }
         .signature-area {
             text-align: center;
-            min-width: 200px;
+            min-width: 220px;
+            border-left: 2px solid #e0e0e0;
+            padding-left: 20px;
         }
         .signature-line {
-            border-bottom: 1px solid #000;
-            width: 150px;
-            margin: 60px auto 10px auto;
+            border-bottom: 2px solid #2C5530;
+            width: 160px;
+            margin: 70px auto 15px auto;
         }
         .print-info {
-            font-size: 9px;
+            font-size: 10px;
             color: #666;
             text-align: center;
-            margin-top: 20px;
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
+            margin-top: 25px;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 15px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
         }
         .important-note {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 10px;
-            margin: 15px 0;
-            border-radius: 3px;
-            font-size: 10px;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid #ffeaa7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 11px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -144,17 +178,19 @@
         <div class="header">
             <div class="company-logo">
                 <div>
-                    <div style="font-weight: bold; font-size: 6px;">RUMAH</div>
-                    <div style="font-size: 5px;">KERJA</div>
+                    <div style="font-weight: bold; font-size: 10px;">PT</div>
+                    <div style="font-size: 8px;">COMPANY</div>
+                    <div style="font-size: 6px;">LOGO</div>
                 </div>
             </div>
             <div class="header-content">
                 <div class="slip-title">SURAT KETERANGAN CUTI</div>
-                <div class="slip-number">Nomor: CT/{{ str_pad($leave->id, 4, '0', STR_PAD_LEFT) }}/{{ date('Y') }}</div>
-                <div class="company-address">
-                    Jl. Sempur Kaler No 15<br>
-                    Kota Bogor<br>
-                    Telp: (0251) 123-4567
+                <div style="text-align: center; margin: 10px 0;">
+                    <span class="slip-number">Nomor: CT/{{ str_pad($leave->id, 4, '0', STR_PAD_LEFT) }}/{{ date('Y') }}</span>
+                </div>
+                <div class="company-address" style="text-align: center; font-size: 11px; color: #666;">
+                    Jl. Contoh Alamat No. 123, Jakarta<br>
+                    Telp: (021) 123-4567 | Email: hr@company.com
                 </div>
             </div>
         </div>
@@ -230,32 +266,42 @@
         @endif
 
         <div class="content-section">
-            <p style="margin: 0; line-height: 1.6;">
-                Dengan ini menerangkan bahwa karyawan yang bersangkutan telah diberikan izin cuti sesuai dengan 
-                ketentuan yang berlaku di perusahaan. Cuti ini berlaku efektif mulai tanggal 
-                <strong>{{ $start_date->format('d F Y') }}</strong> sampai dengan 
-                <strong>{{ $end_date->format('d F Y') }}</strong>.
-            </p>
+            <div class="section-title">KETERANGAN RESMI</div>
+            <div style="padding: 18px;">
+                <p style="margin: 0; line-height: 1.8; text-align: justify; font-size: 13px;">
+                    Dengan ini menerangkan bahwa karyawan yang bersangkutan telah diberikan izin cuti sesuai dengan 
+                    ketentuan dan peraturan yang berlaku di perusahaan. Cuti ini berlaku efektif mulai tanggal 
+                    <strong style="color: #2C5530;">{{ $start_date->format('d F Y') }}</strong> sampai dengan 
+                    <strong style="color: #2C5530;">{{ $end_date->format('d F Y') }}</strong>.
+                </p>
+            </div>
         </div>
 
         <div class="footer-section">
             <div class="approval-info">
-                <p style="margin: 0 0 10px 0;"><strong>Disetujui pada:</strong> {{ $leave->approved_at ? $leave->approved_at->format('d F Y') : $date }}</p>
+                <h4 style="margin: 0 0 15px 0; color: #2C5530; font-size: 14px;">Informasi Persetujuan</h4>
+                <p style="margin: 0 0 10px 0; font-size: 13px;"><strong>Disetujui pada:</strong> {{ $leave->approved_at ? $leave->approved_at->format('d F Y, H:i') : $date }}</p>
                 @if($leave->approvedBy)
-                <p style="margin: 0;"><strong>Disetujui oleh:</strong> {{ $leave->approvedBy->name }}</p>
+                <p style="margin: 0 0 10px 0; font-size: 13px;"><strong>Disetujui oleh:</strong> {{ $leave->approvedBy->name }}</p>
+                @endif
+                @if($leave->note)
+                <p style="margin: 0; font-size: 12px; color: #666;"><strong>Catatan:</strong> {{ $leave->note }}</p>
                 @endif
             </div>
             <div class="signature-area">
-                <div>Kota Bogor, {{ $date }}</div>
-                <div style="margin-top: 5px;">HRD Manager</div>
+                <div style="font-size: 13px; margin-bottom: 10px;">Jakarta, {{ $date }}</div>
+                <div style="margin-top: 5px; font-weight: bold; color: #2C5530;">HRD Manager</div>
                 <div class="signature-line"></div>
-                <div style="font-weight: bold;">{{ $leave->approvedBy->name ?? 'HRD Manager' }}</div>
+                <div style="font-weight: bold; font-size: 13px;">{{ $leave->approvedBy->name ?? 'HRD Manager' }}</div>
+                <div style="font-size: 11px; color: #666; margin-top: 5px;">Tanda Tangan Digital</div>
             </div>
         </div>
 
         <div class="print-info">
-            Dokumen ini digenerate secara otomatis pada {{ now()->format('d F Y H:i:s') }}<br>
-            Dokumen ini sah tanpa tanda tangan basah sesuai ketentuan perusahaan
+            <strong style="color: #2C5530;">Dokumen Resmi Perusahaan</strong><br>
+            Digenerate secara otomatis pada {{ now()->format('d F Y, H:i:s') }} WIB<br>
+            Dokumen ini sah dan memiliki kekuatan hukum yang sama dengan dokumen fisik<br>
+            <em style="font-size: 9px;">Verifikasi keaslian dokumen dapat dilakukan melalui sistem HRD</em>
         </div>
     </div>
 </body>

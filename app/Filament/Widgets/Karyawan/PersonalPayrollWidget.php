@@ -36,20 +36,20 @@ class PersonalPayrollWidget extends BaseWidget
         $currentYear = now()->year;
         
         $currentPayroll = Penggajian::where('karyawan_id', $karyawan->id)
-            ->whereMonth('tanggal_gaji', $currentMonth)
-            ->whereYear('tanggal_gaji', $currentYear)
+            ->whereMonth('periode', $currentMonth)
+            ->whereYear('periode', $currentYear)
             ->first();
 
         // Gaji bulan lalu
         $lastMonth = now()->subMonth();
         $lastPayroll = Penggajian::where('karyawan_id', $karyawan->id)
-            ->whereMonth('tanggal_gaji', $lastMonth->month)
-            ->whereYear('tanggal_gaji', $lastMonth->year)
+            ->whereMonth('periode', $lastMonth->month)
+            ->whereYear('periode', $lastMonth->year)
             ->first();
 
         // Total gaji tahun ini
         $yearlyTotal = Penggajian::where('karyawan_id', $karyawan->id)
-            ->whereYear('tanggal_gaji', $currentYear)
+            ->whereYear('periode', $currentYear)
             ->sum('total_gaji');
 
         // Gaji pokok dari jabatan
