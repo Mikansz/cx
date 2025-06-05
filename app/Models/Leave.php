@@ -62,6 +62,10 @@ class Leave extends Model
         'approved_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'days_requested',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -136,5 +140,15 @@ class Leave extends Model
         }
 
         return null;
+    }
+
+    // Get days requested attribute
+    public function getDaysRequestedAttribute(): int
+    {
+        if ($this->start_date && $this->end_date) {
+            return $this->start_date->diffInDays($this->end_date) + 1;
+        }
+
+        return 1; // Default untuk izin harian
     }
 }
